@@ -10,7 +10,7 @@ Data:
     weather_data: data/RC_model/weatherData/Munich_5years.mos
     T_min: 290 #[K]
     T_max: 294 #[K]
-    num_steps: 3000
+    num_steps: 100
     C: 7452000 # first entries taken from  Identifying suitable models for the heat dynamics of buildings: Peder Bacher, Henrik Madsen
     R: 0.00529
     C1: 3852000.0
@@ -20,7 +20,7 @@ Data:
     C3: 10512000.0
     R3: 0.00454
     A_eff: 7.89
-  dt: 300
+  dt: 900
 
 # Settings for the neural network
 NeuralNet:

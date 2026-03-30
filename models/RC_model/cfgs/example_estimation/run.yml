@@ -1,0 +1,65 @@
+perform_sweep: True
+parameter_space:
+  seed: !sweep
+    default: 1
+    range: [8]
+  num_epochs: 30
+  RC_model:
+    Data:
+      dt: 900
+      load_from_dir:
+        path: data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T1
+        csv_keys: [thermalZone.TAir, weaBus.TDryBul, totalHeatingPower.y, weaDat.weaBus.HGloHor]
+        effWinArea: 1
+        subset: 8640 # 3 months
+
+    # Settings for the neural network
+    NeuralNet:
+      type: mlp
+      lookback: 96 #amount of timesteps input for param estimation | 4 or 96
+
+      num_layers: 2 
+      nodes_per_layer:
+        default: 140
+      biases:
+        default: [0, 1]
+      activation_funcs:
+        default: sigmoid
+        layer_specific:
+          -1: abs
+      learning_rate: 0.0029
+      optimizer: Adam
+      prior:
+        distribution: uniform
+        parameters:
+          lower: 0
+          upper: 1
+
+    # Settings for the training
+    Training:
+      train_range: [5760, 6500] #use 12 days of data for training
+      val_range: [6500, 6912]
+      test_range: [6912, 8640] # and the following 12 days for evaluation
+      mode: predict
+
+
+      model_type: TwoR2C
+      slicing_difference: 96
+      loss_function:
+        name: RMSELoss
+        kwargs:
+          reduction: sum
+      device: cpu
+      num_threads: ~
+
+      # Can scale parameters here
+      scaling_factors:
+        C: 10.0e8 
+        R: 0.01
+        C1: 10.0e8
+        R1: 0.01
+        C2: 10.0e8
+        R2: 0.01
+        C3: 10.0e8
+        R3: 0.01
+        A_eff: 100

@@ -6,7 +6,7 @@
 #         utopya projects register BASE_DIR --info-file path/to/this/file
 #
 ---
-project_name: NeuralABM
+project_name: ParameterEstimation
 
 paths:
   models_dir: models
@@ -23,6 +23,8 @@ metadata:
   long_description: Neural agent-based modelling project
   authors:
     - Thomas Gaskin
+    - Timo Germann
+    - Fabian Raisch
   license: LGPLv3+
   language: python3
   version: ~

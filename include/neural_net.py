@@ -76,11 +76,6 @@ OPTIMIZERS = {
         "SGD": torch.optim.SGD,
 }
 
-MINIMIZE_FUNCTIONS = {
-        "modestga.minimize": modestga.minimize,
-        "scipy.optimize.minimize": scipy.optimize.minimize
-}
-
 
 
 

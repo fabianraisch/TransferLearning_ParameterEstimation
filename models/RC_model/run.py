@@ -183,14 +183,6 @@ if __name__ == "__main__":
             output_size=len(physical.parameter_names),
             **model_cfg["NeuralNet"],
             )
-    elif model_cfg["NeuralNet"]["type"] == "external":
-        net = base.External(input_size = input_size,
-            output_size = len(physical.parameter_names),
-            **model_cfg["NeuralNet"],
-            )
-        model_cfg["Training"]["mode"] = "external"
-        cfg["num_epochs"] = 1
-        log.info("External optimization algorithm selected. Number of epochs set to one, since epoch control is done externally")
     else:
         net = base.NeuralNet(
             input_size=input_size,

@@ -1,0 +1,207 @@
+loss:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+
+
+# Plot the predictions over time, colour-coded by loss
+predictions:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [optimizer1]
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap: &cmap
+    continuous: true
+    from_values:
+      0: !dag_result c_darkblue
+      #0.5: !dag_result c_darkblue
+      1: !dag_result c_yellow
+
+
+
+# Plot the marginals together
+marginals_all:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+
+  transform:
+    - loss_to_probs: [!dag_tag loss]
+      kwargs:
+        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+        mlp: pure_negexp
+    - list_by_dims: [!dag_prev , [type]]
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - list_by_dims: [!dag_tag parameters, [type]]
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 200
+      tag: data
+
+  alpha: 0.4
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: type
+  sharex: False
+  sharey: False
+
+
+
+# plot the simulation of the model using the predicted parameters and the residuals.
+parameter_evaluation:
+  based_on:
+    - .creator.multiverse
+    - model_pred
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+      dt:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , dt]
+      rc_data: RC_data
+      start_index:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , data_used_up_to]
+  transform:
+    - evaluate_to_bars: [!dag_tag parameters, !dag_tag loss]
+      kwargs:
+        groupings: [None]
+        mean_over: [None]
+        #mean_over: [None]
+        # input evaluation method(s) for any parameter of the parameter space in an array
+        # it is recommended to only modify the eval methods of one sweep dimension (e.g. type)
+        # currently only works on string parameters and PLEASE DONT TOUCH THE MODEL TYPE
+        # (the tool was mainly designed for different evaluation for types, e.g. optimizer-last, optimizer-best)
+        eval_method:
+          optimizer: [best]
+          #mlp: [marginals, best]
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        bar_colors: [!dag_tag c_lightblue, !dag_tag c_darkblue, !dag_tag c_purple, !dag_tag c_red, !dag_tag c_orange, !dag_tag c_lightbrown]
+        bins: 100
+        horizon: 96
+        simulate_from_index: !dag_tag start_index
+        marginals_key: kde
+      tag: evaluation
+
+    # store the simulation results and plot args into accessible dag_tags
+    - getitem: [!dag_tag evaluation , simulation]
+      tag: simulation
+    - getitem: [!dag_tag simulation, 0]
+      tag: data
+    - getitem: [!dag_tag simulation, 1]
+      tag: delta
+    - getitem: [!dag_tag simulation, 2]
+      tag: maes 
+    - getitem: [!dag_tag simulation, 3]
+      tag: rmses 
+    - getitem: [!dag_tag evaluation, bar_ticks]
+      tag: bar_ticks
+    - getitem: [!dag_tag evaluation, time_coords]
+      tag: time_coords
+    - getitem: [!dag_tag evaluation, bar_colors]
+      tag: bar_colors
+    - getitem: [!dag_tag evaluation, bar_x]
+      tag: bar_x
+    - getitem: [!dag_tag evaluation, bar_ticks_x]
+      tag: bar_ticks_x
+    - getitem: [!dag_tag evaluation, groupings]
+    - str: [!dag_prev ]
+    - add: ["hyperparameters\t", !dag_prev ]
+      tag: bar_legend
+
+
+
+training_data:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.line
+  universes: first
+  select:
+    data: RC_data
+  x: time
+  col: kind
+  col_wrap: 2
+  sharey: False
