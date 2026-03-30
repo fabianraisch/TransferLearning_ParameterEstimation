@@ -1,0 +1,123 @@
+# to be tested
+# datensätze (builda, real)
+# RC, TiTe
+# NeuralNet, optimizer (best, bayesian), GA(best, bayesian)
+
+perform_sweep: True
+parameter_space:
+  seed: !sweep
+    default: 1
+    range: [8]
+  num_epochs: !coupled-sweep
+    target_name: type
+    default: 50
+    values:
+      - 50
+      - "50"
+      - 700
+      - 4000
+  RC_model:
+    Data:
+      dt: 900
+      load_from_dir:
+        path: data/RC_model/ds4_formatted_Builda_cols.csv
+        csv_keys: [thermalZone.TAir, weaBus.TDryBul, totalHeatingPower.y, weaDat.weaBus.HGloHor]
+        effWinArea: 1
+        subset: 8640 # 3 months 
+
+    # Settings for the neural network
+    NeuralNet:
+      type: !sweep
+        default: mlp # lstm | mlp | optimizer
+        values:
+          - mlp0
+          - mlp1
+          - optimizer0
+          - optimizer1
+      pretrained: !coupled-sweep
+        target_name: type
+        default: None
+        values:
+          - None0
+          - data/RC_model/NN_parameter_estimation/251229-005526.pth
+          - None1
+          - None2
+      lookback: 96 #amount of timesteps input for param estimation | 4 or 96
+
+      num_layers: 2 # TUNING (2..5, 1er steps)
+      nodes_per_layer:
+        default: 140 # TUNING (20..200, 20er steps)
+      biases:
+        default: [0, 1]
+      activation_funcs:
+        default: sigmoid #TUNING? - try relu/alpharelu
+        layer_specific:
+          -1: abs
+      learning_rate: 0.0029 # TUNING (0.0001.. 0.005, log steps)
+      optimizer: !coupled-sweep
+        target_name: type
+        default: Adam
+        values:
+        - Adam0
+        - Adam1
+        - Adam2
+        - GA0
+      prior:
+        distribution: uniform
+        parameters:
+          lower: 0
+          upper: 1
+
+    # Settings for the training
+    Training:
+      train_range: !coupled-sweep
+        target_name: slicing_difference
+        default: [0, 4608] #define in indices or percent
+        values:
+          - [0, 4608]       # 48d
+          - [2304, 4608]    # 24d
+          - [3456, 4608]    # 12d
+      val_range: [4608, 4608]   # validation not needed in estimation run
+      test_range: [4608, 5760]  # 12d test
+      mode: predict
+
+
+      model_type: TwoR2C
+      batch_size: 1 #TUNING (8, 16, 32)
+      slicing_difference: !sweep
+        default: 96
+        values: 
+          - 96
+          - 8.1 # decimals are ignored
+          - 8.2
+      loss_function:
+        name: RMSELoss
+        kwargs:
+          reduction: sum
+      device: cpu
+      num_threads: ~
+
+      # Can scale parameters here
+      scaling_factors:
+        C: 10.0e8 #maybe rescale so results lie roughly in 0-1
+        R: 0.01
+        C1: 10.0e8
+        R1: 0.01
+        C2: 10.0e8
+        R2: 0.01
+        C3: 10.0e8
+        R3: 0.01
+        A_eff: 100
+
+    Tuning:
+      perform: False
+      study_name: "tuning"
+      study_n_trials: 30
+      epochs_tuning: 20
+      n_jobs: -1
+      #seeds_per_trial: 1 # -> immer range(x) | not inserting the key results in the global rng seed being used
+      hyperparam_ranges:
+        learning_rate: [0.0001, 0.005, "NeuralNet", "float"]
+        nodes_per_layer/default: [20, 200, "NeuralNet", "int", 20]
+        num_layers: [2, 5, "NeuralNet", "int", 1]
+        batch_size: [8, 32, "Training", "int", 8]

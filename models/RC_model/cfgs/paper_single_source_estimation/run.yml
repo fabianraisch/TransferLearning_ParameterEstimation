@@ -1,0 +1,78 @@
+perform_sweep: True
+parameter_space:
+  seed: !sweep
+    default: 1
+    range: [8]
+  num_epochs: !coupled-sweep
+    target_name: type
+    default: 50
+    values: [50, "50", 700, 4000]
+  RC_model:
+    Data:
+      dt: 900
+      load_from_dir:
+        path: data/RC_model/ds4_formatted.csv
+        csv_keys: [T_in,T_out,heatPower,HGloHor]
+        effWinArea: 1
+        subset: 8640 # 3monate
+
+    # Settings for the neural network
+    NeuralNet:
+      type: !sweep
+        default: mlp
+        values: [mlp0, mlp1, optimizer0, optimizer1]
+      pretrained: !coupled-sweep
+        target_name: type
+        default: None
+        values: [None0, data/RC_model/NN_parameter_estimation/251229-005526.pth, None1, None2]
+      lookback: 96 #amount of timesteps input for param estimation | 4 (1h) or 96 (1 day)
+
+      num_layers: 2 # must match pretrained architecture
+      nodes_per_layer:
+        default: 140 # must match pretrained architecture
+      biases:
+        default: [0, 1]
+      activation_funcs:
+        default: sigmoid
+        layer_specific:
+          -1: abs
+      learning_rate: 0.0029
+      optimizer: !coupled-sweep
+        target_name: type
+        default: Adam
+        values: [Adam0, Adam1, Adam2, GA0]
+      prior:
+        distribution: uniform
+        parameters:
+          lower: 0
+          upper: 1
+
+    # Settings for the training
+    Training:
+      train_range: 0.6 #define in indices or percent
+      val_range: 0.2
+      test_range: 0.2
+      mode: predict
+
+
+      model_type: TwoR2C
+      batch_size: 1
+      slicing_difference: 96
+      loss_function:
+        name: RMSELoss
+        kwargs:
+          reduction: sum
+      device: cpu
+      num_threads: ~
+
+      # Can scale parameters here
+      scaling_factors:
+        C: 10.0e8 #maybe rescale so results lie roughly in 0-1
+        R: 0.01
+        C1: 10.0e8
+        R1: 0.01
+        C2: 10.0e8
+        R2: 0.01
+        C3: 10.0e8
+        R3: 0.01
+        A_eff: 100

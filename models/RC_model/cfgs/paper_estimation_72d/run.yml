@@ -1,0 +1,104 @@
+perform_sweep: True
+parameter_space:
+  seed: !sweep
+    default: 1
+    range: [8]
+  num_epochs: !coupled-sweep
+    target_name: type
+    default: 50
+    values:
+      - 50
+      - "50"
+      - 700
+      - 4000
+  RC_model:
+    Data:
+      dt: 900
+      load_from_dir:
+        path: !sweep
+          default: data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity
+          values:
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_21#Roo_19#Wea_Amsterdam#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_20.5#Roo_19#Wea_Munich#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_150000#FawSou_0.19#ZonLen_10#Roo_22.5#Roo_22#Wea_Bratislava#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_280000#FawSou_0.16#ZonLen_7#Roo_23#Roo_23#Wea_Bratislava#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_40000#FawSou_0.19#ZonLen_10#Roo_23#Roo_21.5#Wea_Amsterdam#Int_NoActivity
+        csv_keys: [thermalZone.TAir, weaBus.TDryBul, totalHeatingPower.y, weaDat.weaBus.HGloHor]
+        effWinArea: 1
+        subset: 8640 # 3 months
+
+    # Settings for the neural network
+    NeuralNet:
+      type: !sweep
+        default: mlp # lstm | mlp | optimizer
+        values:
+          - mlp0
+          - mlp1
+          - optimizer0
+          - optimizer1
+      pretrained: !coupled-sweep
+        target_name: type
+        default: None
+        values:
+          - None0
+          - data/RC_model/NN_parameter_estimation/251229-005526.pth
+          - None1
+          - None2
+      lookback: 96 #amount of timesteps input for param estimation | 4 or 96
+
+      num_layers: 2
+      nodes_per_layer:
+        default: 140
+      biases:
+        default: [0, 1]
+      activation_funcs:
+        default: sigmoid
+        layer_specific:
+          -1: abs
+      learning_rate: 0.0029
+      optimizer: !coupled-sweep
+        target_name: type
+        default: Adam
+        values:
+        - Adam0
+        - Adam1
+        - Adam2
+        - GA0
+      prior:
+        distribution: uniform
+        parameters:
+          lower: 0
+          upper: 1
+
+    # Settings for the training
+    Training:
+      train_range: [0, 4000] #define in indices or percent
+      val_range: [4000, 6912]
+      test_range: [6912, 8640]
+      mode: predict
+
+
+      model_type: TwoR2C
+      slicing_difference: 96
+      loss_function:
+        name: RMSELoss
+        kwargs:
+          reduction: sum
+      device: cpu
+      num_threads: ~
+
+      # Can scale parameters here
+      scaling_factors:
+        C: 10.0e8
+        R: 0.01
+        C1: 10.0e8
+        R1: 0.01
+        C2: 10.0e8
+        R2: 0.01
+        C3: 10.0e8
+        R3: 0.01
+        A_eff: 100
+

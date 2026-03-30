@@ -1,0 +1,77 @@
+perform_sweep: False
+parameter_space:
+  seed: !sweep
+    default: 1
+    range: [8]
+  num_epochs: 30
+  RC_model:
+    Data:
+      dt: 900
+      load_from_dir:
+        path: data/RC_model/NN_parameter_estimation/450sources_nnEstim_noWin_inhom_noAct
+        csv_keys: [thermalZone.TAir, weaBus.TDryBul, totalHeatingPower.y, weaDat.weaBus.HGloHor]
+        effWinArea: 1
+        subset: 8640 # 3 months
+
+    # Settings for the neural network
+    NeuralNet:
+      type: mlp # lstm | mlp 
+      lookback: 96 #amount of timesteps input for param estimation | 4 (1h) or 96 (1 day)
+
+      num_layers: 2 # TUNING (2..5, 1er steps)
+      nodes_per_layer:
+        default: 140 # TUNING (20..200, 20er steps)
+      biases:
+        default: [0, 1]
+      activation_funcs:
+        default: sigmoid
+        layer_specific:
+          -1: abs
+      learning_rate: 0.000345906142863202 # TUNING (0.0001.. 0.005, log steps)
+      optimizer: Adam
+      prior:
+        distribution: uniform
+        parameters:
+          lower: 0
+          upper: 1
+
+    # Settings for the training
+    Training:
+      train_range: 0.6 #define in indices or percent
+      val_range: 0.2
+      test_range: 0.2
+      mode: generalize
+      model_type: RC
+      batch_size: 32 #TUNING (8, 16, 32)
+      slicing_difference: 96
+      loss_function:
+        name: RMSELoss
+        kwargs:
+          reduction: sum
+      device: cpu
+      num_threads: ~
+
+      # Can scale parameters here
+      scaling_factors:
+        C: 10.0e8 #maybe rescale so results lie roughly in 0-1
+        R: 0.01
+        C1: 10.0e8
+        R1: 0.01
+        C2: 10.0e8
+        R2: 0.01
+        C3: 10.0e8
+        R3: 0.01
+        A_eff: 100
+
+    Tuning:
+      perform: True
+      study_name: "tuning"
+      study_n_trials: 30
+      epochs_tuning: 20
+      n_jobs: 16
+      seeds_per_trial: 5
+      hyperparam_ranges:
+        learning_rate: [0.0001, 0.005, "NeuralNet", "float"]
+        nodes_per_layer/default: [20, 200, "NeuralNet", "int", 20]
+        num_layers: [2, 5, "NeuralNet", "int", 1]
+        batch_size: [8, 32, "Training", "int", 8]

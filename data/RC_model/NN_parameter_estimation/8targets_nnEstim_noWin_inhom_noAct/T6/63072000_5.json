@@ -1,0 +1,204 @@
+{
+    "variations": {
+        "zone_length": [
+            7
+        ],
+        "zone_width": [
+            10
+        ],
+        "floor_height": [
+            3.04
+        ],
+        "n_floors": [
+            2
+        ],
+        "fAWin_south": [
+            0.16
+        ],
+        "fAWin_west": [
+            0.16
+        ],
+        "fAWin_north": [
+            0.16
+        ],
+        "fAWin_east": [
+            0.16
+        ],
+        "fATransToAWindow": [
+            0.9
+        ],
+        "fARoofToAFloor": [
+            1.63612217795485
+        ],
+        "fAInt": [
+            1.238235294117647
+        ],
+        "heatCapacity_furniture_per_m2": [
+            2230
+        ],
+        "UExt": [
+            0.85
+        ],
+        "heatCapacity_wall": [
+            40000
+        ],
+        "UFloor": [
+            0.85
+        ],
+        "heatCapacity_floor": [
+            483840
+        ],
+        "UInt": [
+            0.5
+        ],
+        "heatCapacity_internalWall": [
+            145154
+        ],
+        "URoof": [
+            0.85
+        ],
+        "heatCapacity_roof": [
+            81240
+        ],
+        "UWin": [
+            1.85
+        ],
+        "thermalZone.gWin": [
+            0.7
+        ],
+        "heatRecoveryRate": [
+            0
+        ],
+        "airChangeRate": [
+            0.3
+        ],
+        "weaDat.fileName": [
+            "resources/weatherFiles/10years/Munich.mos"
+        ],
+        "internalGain.fileName": [
+            "resources/internalGainProfiles/NoActivity.txt"
+        ],
+        "hygienicalWindowOpening.fileName": [
+            "resources/hygienicalWindowOpeningProfiles/no_opening.txt"
+        ],
+        "roomTempLowerSetpoint": [
+            19.5
+        ],
+        "roomTempUpperSetpoint": [
+            22
+        ],
+        "UseInternalController": [
+            1
+        ],
+        "extWall_C_distribution": [
+            [
+                26880,
+                2446,
+                7850
+            ]
+        ],
+        "floor_C_distribution": [
+            [
+                478800,
+                5040,
+                0.001
+            ]
+        ],
+        "roof_C_distribution": [
+            [
+                22440,
+                58800,
+                0.001
+            ]
+        ],
+        "extWall_R_distribution": [
+            [
+                0.1425,
+                0.268922018348624,
+                0.465422018348624,
+                0.339
+            ]
+        ],
+        "floor_R_distribution": [
+            [
+                0.0525,
+                0.0525,
+                0.1579,
+                0.0001
+            ]
+        ],
+        "roof_R_distribution": [
+            [
+                1.1085,
+                1.1085,
+                0.1,
+                0.0001
+            ]
+        ],
+        "intWall_R_distribution": [
+            "monolythic"
+        ],
+        "intWall_C_distribution": [
+            "monolythic"
+        ],
+        "internalGainsConvectiveFraction": [
+            0.4
+        ],
+        "heatingConvectiveFraction": [
+            1
+        ],
+        "Rsi_extWall": [
+            0.13333333333333333
+        ],
+        "Rsi_intWall": [
+            0.13333333333333333
+        ],
+        "Rsi_floor": [
+            0.17543859649122806
+        ],
+        "Rsi_roof": [
+            0.1
+        ],
+        "Rse_extWall": [
+            0.04
+        ],
+        "Rse_roof": [
+            0.04
+        ],
+        "Rsi_window": [
+            0.13333333333333333
+        ],
+        "Rse_window": [
+            0.05
+        ],
+        "ta_min": [
+            null
+        ],
+        "ti_set": [
+            null
+        ]
+    },
+    "variation_type": "cartesian_product",
+    "converter_functions": [
+        "Link_resolver",
+        "Miscellaneous_handler",
+        "Zone_dimensions_calculator",
+        "RC_Distribution_Configurator",
+        "Component_properties_calculator",
+        "Nominal_heating_power_calculator"
+    ],
+    "controller_name": [],
+    "controller_step_size": 90,
+    "start_time": 0,
+    "stop_time": 63072000,
+    "writer_step_size": 900,
+    "columns_included": [
+        "roomTempUpperSetpoint",
+        "thermalZone.TAir",
+        "totalHeatingPower.y",
+        "weaBus.TDryBul",
+        "weaBus.HDirNor",
+        "weaBus.HDifHor",
+        "weaDat.weaBus.HGloHor"
+    ]
+}

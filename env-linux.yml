@@ -1,0 +1,40 @@
+name: neuralabmrc
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - numpy==1.23.5
+      - pandas==1.3.5
+      - torch
+      - scipy
+      - xarray
+      - matplotlib
+      - typing_extensions
+      - utopya
+      - torchdiffeq
+      - dantro
+      - dantro>=0.20.0b0
+      - h5py>=3.7.0
+      - pytest
+      - ruamel.yaml
+      - ruamel.base
+      - setuptools
+      - coloredlogs
+      - pre-commit
+      - coverage
+      - tqdm
+      - pygad
+      - optuna
+      - tplot
+      - modestpy
+      - "setuptools<=70"
+
+
+
+
+
+
+

@@ -1,0 +1,489 @@
+---
+# ======================================================================================================================
+#  ╦  ╦╔═╗╦═╗╦╔═╗╔╗ ╦  ╔═╗╔═╗
+#  ╚╗╔╝╠═╣╠╦╝║╠═╣╠╩╗║  ║╣ ╚═╗
+#   ╚╝ ╩ ╩╩╚═╩╩ ╩╚═╝╩═╝╚═╝╚═╝
+# ======================================================================================================================
+.variables:
+  base_path:        &base_path    data/RC_model
+
+.meta_ops:
+  dag_options:
+    meta_operations:
+      neg_exp:
+        - mul: [!arg 0 , -1]
+        - np.exp: [!dag_prev ]
+      .isel_with_drop:
+        - .isel: [!arg 0, !arg 1]
+          kwargs: {drop: True}
+      .sel_with_drop:
+        - .sel: [!arg 0, !arg 1]
+          kwargs: {drop: True}
+
+      prepare_error_label:
+        - str: [!arg 0]
+          tag: short_mae
+        - str: [!arg 1]
+          tag: short_rmse
+        - str: [!arg 2]
+          tag: long_mae
+        - str: [!arg 3]
+          tag: long_rmse
+        - add: ["residuals (test mae: ", !dag_tag short_mae]
+        - add: [!dag_prev , ", test rmse: "]
+        - add: [!dag_prev , !dag_tag short_rmse]
+        - add: [!dag_prev , ", global mae: "]
+        - add: [!dag_prev , !dag_tag long_mae]
+        - add: [!dag_prev , ", global rmse: "]
+        - add: [!dag_prev , !dag_tag long_rmse]
+        - add: [!dag_prev , ")"]
+
+
+      # dantro-yaml-DAG function that automatically orders and compares estimation runs over arbitrary sweep dimensions
+      # takes in raw data and returns np.arrays of every simulation performed using parameters, the residuals, some legends and
+      # MAE and RMSE of the simulation w/ respect to ground truth as bar plots ordered following thg "groupings" kwarg.
+      #
+      # args:
+      #     - !arg 0: parameter history of estimation run
+      #     - !arg 1: corresponding loss
+      # kwargs:
+      #     - !kwarg mean_over: list of dimensions whose errors are meaned over to get resulting error, like multiple buildings ('path')
+      #     - !kwarg eval_method: dictionary of type {'key': 'method'} for different parameter selection strategies (like {'optimizer': 'best'})
+      #                           non-specified optimization methods are marginalized as per usual
+      #     - !kwarg rc_data: ground truth data
+      #     - !kwarg groupings: list of dimensions that corresponds to how the resulting bars are grouped and ordered
+      #     - !kwarg dt: the dt used in training and for evaluation, should match the dt of ground thruth data
+      #     - !kwarg marginals_key: 'y' for standart bayesian marginalization, 'kde' transforms the marginals once using scipy.stats.gaussian_kde
+      #     - !kwarg horizon: the amount of timesteps the physical model is evolved before being reset to ground truth
+      #     - !kwarg simulate_from_index: the index in ground truth, from the simulation's error is considered.
+      #                           Used for separating train and test ranges
+      evaluate_to_bars:
+        - get_mean_over_count: [!arg 0, !kwarg mean_over]
+          tag: mean_over_count
+
+
+        - prepare_data_for_eval_method: [!arg 0, !kwarg eval_method]
+          tag: param_data
+        - prepare_data_for_eval_method: [!arg 1, !kwarg eval_method]
+          tag: loss_data
+        - prepare_data_for_eval_method: [!kwarg rc_data, !kwarg eval_method]
+          tag: external_data
+        - bar_plot_groups: [!dag_tag param_data, !kwarg groupings]
+          tag: bar_x
+        - add: [!kwarg groupings, !kwarg mean_over]
+        - get_model_types_from_multiverse: [!dag_tag param_data, !dag_prev ]
+          tag: model_types
+
+
+          # format probabilites into 1D-array and broadcast it with loss
+        - loss_to_probs: [!dag_tag loss_data]
+          kwargs:
+            optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+            mlp: pure_negexp
+        - list_by_dims: [!dag_prev , !kwarg groupings]
+        - list_by_dims: [!dag_prev , !kwarg mean_over]
+        - cut_nans_from_dataset: [!dag_prev ]
+          tag: probabilities
+
+        - list_by_dims: [!dag_tag param_data, !kwarg groupings]
+        - list_by_dims: [!dag_prev , !kwarg mean_over]
+        - cut_nans_from_dataset: [!dag_prev ]
+          tag: params_list
+        - list_by_dims: [!dag_tag external_data, !kwarg groupings]
+        - list_by_dims: [!dag_prev , !kwarg mean_over]
+          tag: rc_data_list
+
+          # format probabilites (negexp of loss) into 1D-array and broadcast it with parameters (foreach on array)
+        - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+          tag: prob
+        - flatten_dims_except: [!dag_tag params_list , parameters, sample]
+          tag: params
+        - broadcast: [!dag_tag params, !dag_tag prob]
+
+        - filter_for_eval_method: [!dag_prev , !kwarg groupings, !kwarg eval_method]
+          kwargs:
+            dimdata: !dag_tag param_data
+            mean_over_count: !dag_tag mean_over_count
+        - marginal_from_ds: [!dag_prev ]
+          kwargs:
+            x: x
+            y: loss
+            exclude_dim: [parameter]
+            bins: !kwarg bins
+            fit_kde: True
+          tag: marginals
+
+          # get plot labels
+        - add: [[true_data] , !dag_tag model_types]
+          #- myprint: [!dag_prev ]
+          tag: comp_labels
+        - cart_prod_string: [["delta - ", "mae - "], !dag_tag model_types]
+          #- myprint: [!dag_prev ]
+          tag: delta_labels
+
+          # select time array from data
+        - .coords: [!dag_tag external_data, time]
+        - mul: [!dag_prev , !kwarg dt]
+        - select_first_uni_time_coords: [!dag_prev ]
+          tag: time_coords
+
+          #create bar colour array
+        - get_color_array: [!kwarg bar_colors, !kwarg groupings, !dag_tag param_data]
+          tag: bar_colors
+
+        # generate ticks for bars describing the unique parameters
+        - get_permut_description: [!dag_tag param_data, !kwarg groupings]
+          tag: bar_ticks
+
+        - add: [!kwarg groupings, !kwarg mean_over]
+        - get_permut_description: [!dag_tag param_data, !dag_prev ]
+        - cart_prod_string: [["simulation: ", "residuals: "], !dag_prev ]
+          tag: csv_heads
+
+          # simulate the model data
+        - simulate_model: !dag_tag marginals
+          kwargs:
+            marginals_key: !kwarg marginals_key
+            model_type: !dag_tag model_types
+            dt: !kwarg dt
+            rc_data: !dag_tag rc_data_list
+            horizon: !kwarg horizon
+            simulate_from_index: !kwarg simulate_from_index
+            mean_over: !dag_tag mean_over_count
+          tag: simulation
+
+        # format output dict
+        - dict:
+            simulation: !dag_tag simulation
+            delta_labels: !dag_tag delta_labels
+            comp_labels: !dag_tag comp_labels
+            bar_ticks: !dag_tag bar_ticks
+            bar_colors: !dag_tag bar_colors
+            time_coords: !dag_tag time_coords
+            bar_x: !dag_tag bar_x
+            bar_ticks_x: !dag_tag bar_x
+            groupings: !kwarg groupings
+            csv_heads: !dag_tag csv_heads
+       
+       
+
+
+
+.default_style:
+  dag_visualization:
+    enabled: False
+  dag_options:
+    define: &colors
+
+      # Make colors and page widths accessible across all plots
+      c_yellow: '#F5DDA9'
+      c_orange: '#EC9F7E'
+      c_red: '#ec7070'
+      c_pink: '#F8A6A6'
+      c_purple: '#A07CB0'
+      c_lightblue: '#97c3d0'
+      c_darkblue: '#2F7194'
+      c_lightgreen: '#AFD8BC'
+      c_darkgreen: '#48675A'
+      c_lightbrown: '#C6BFA2'
+      c_lightgrey: '#AFC1B9'
+      c_darkgrey: '#3D4244'
+
+      # Set the page width of the document to allow for easy integration
+      _page_width: 7.5
+
+      # These are available for all plots and can be used to adjust the figure size or generate new sizes as needed
+      full_width: !dag_tag _page_width
+      half_width:
+        - div: [!dag_tag _page_width, 2]
+      third_width:
+        - div: [!dag_tag _page_width, 3]
+      two_thirds_width:
+        - div: [!dag_tag _page_width, 3]
+        - mul: [!dag_prev , 2]
+      quarter_width:
+        - div: [!dag_tag _page_width, 4]
+      fifth_width:
+        - div: [!dag_tag _page_width, 5]
+
+  style:
+    text.usetex: False   # Set to 'True' to use latex
+    font.family: 'Arial' # Set to a font family of your choice, e.g. Helvetica
+    mathtext.fontset:   cm
+    text.latex.preamble: \usepackage{amssymb} \usepackage{amsmath}
+
+    # Set the label fontsize
+    font.size:          &fontsize 7
+    axes.titlesize:     *fontsize
+    axes.labelsize:     *fontsize
+    xtick.labelsize:    *fontsize
+    ytick.labelsize:    *fontsize
+    legend.fontsize:    *fontsize
+    grid.linewidth:     0.5
+    savefig.bbox:       tight
+    axes.prop_cycle: !format
+      fstr: "cycler('color', ['{colors[c_darkblue]:}',
+                              'black',
+                              '{colors[c_darkgreen]:}',
+                              '{colors[c_lightgreen]:}',
+                              '{colors[c_red]:}',
+                              '{colors[c_lightblue]:}',
+                              '{colors[c_lightbrown]:}',
+                              '{colors[c_orange]:}',
+                              '{colors[c_yellow]:}',
+                              '{colors[c_darkgrey]:}',
+                              '{colors[c_pink]:}',
+                              '{colors[c_purple]:}',
+                              '{colors[c_lightgrey]:}'
+                              ])"
+      colors:
+        <<: *colors
+    axes.grid:          True
+    axes.spines.top:    False
+    axes.spines.right:  False
+
+  helpers:
+    save_figure:
+      dpi: 900
+  file_ext: pdf
+
+.cycler_marginals:
+  style:
+    axes.prop_cycle: !format
+      fstr: "cycler('color', ['{colors[c_darkblue]:}', '{colors[c_pink]:}'])"
+      colors:
+        <<: *colors
+
+.cycler_green_red_green:
+  style:
+    axes.prop_cycle: !format
+      fstr: "cycler('color', ['{colors[c_lightgreen]:}', '{colors[c_red]:}', '{colors[c_darkgreen]:}',])"
+      colors:
+        <<: *colors
+
+.cycler_blue_orange_brown:
+  style:
+    axes.prop_cycle: !format
+      fstr: "cycler('color', ['{colors[c_darkblue]:}', '{colors[c_orange]:}', '{colors[c_lightbrown]:}'])"
+      colors:
+        <<: *colors
+
+.cycler_blue_pink_grey:
+  style:
+    axes.prop_cycle: !format
+      fstr: "cycler('color', ['{colors[c_darkblue]:}', '{colors[c_pink]:}', '{colors[c_darkgrey]:}'])"
+      colors:
+        <<: *colors
+
+# ======================================================================================================================
+#  ╔╦╗╔═╗╔╦╗╔═╗╦  ╔═╗╔╦╗╔═╗╔═╗
+#   ║ ║╣ ║║║╠═╝║  ╠═╣ ║ ║╣ ╚═╗
+#   ╩ ╚═╝╩ ╩╩  ╩═╝╩ ╩ ╩ ╚═╝╚═╝
+# ======================================================================================================================
+# -- Overloads ---------------------------------------------------------------------------------------------------------
+# Overload some configs to insert model-specific settings
+.creator.universe:
+  based_on:
+    - .creator.universe
+    - .default_style
+    - .meta_ops
+
+  dag_options:
+    select_path_prefix: *base_path
+
+.creator.multiverse:
+  based_on:
+    - .creator.multiverse
+    - .default_style
+    - .meta_ops
+
+  select_and_combine:
+    base_path: *base_path
+
+# Base function for probability densities
+.plot.facet_grid.density:
+  based_on: .plot.facet_grid
+  kind: density
+
+# Base function for barplots
+.plot.facet_grid.bar:
+  based_on: .plot.facet_grid
+  kind: bar
+
+# ======================================================================================================================
+#  ╔═╗╦  ╔═╗╔╦╗╔═╗
+#  ╠═╝║  ║ ║ ║ ╚═╗
+#  ╩  ╩═╝╚═╝ ╩ ╚═╝
+# ======================================================================================================================
+
+# -- Plot of the training loss -----------------------------------------------------------------------------------------
+loss:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.line
+  select:
+    data: loss
+  color: black
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_scales:
+      y: log
+
+loss_mv:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.line
+  select_and_combine:
+    fields:
+      loss_multi: loss
+  transform:
+    - flatten_dims_except: [!dag_tag loss_multi , batch, uni]
+      tag: data
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_scales:
+      y: log
+  x: batch
+  y: loss
+
+# -- Plot of the parameter predictions  --------------------------------------------------------------------------------
+predictions_uni:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.line
+  select:
+    data:
+      path: parameters
+      transform:
+        - .data: [ !dag_prev ]
+  col: parameter
+  sharey: False
+  style:
+    figure.figsize: [ !dag_result half_width, !dag_result half_width ]
+
+# Multiverse predictions
+predictions_mv:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.line
+  select_and_combine:
+    fields:
+      data:
+        path: parameters
+        transform:
+          - .data: [ !dag_prev ]
+  col: parameter
+  x: batch
+  add_legend: False
+  sharey: False
+  style:
+    figure.figsize: [ !dag_result half_width, !dag_result half_width ]
+# Distribution of the initial values (multiverse plot)
+initial_values:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.bar
+  select_and_combine:
+    fields:
+      values:
+        path: parameters
+        transform:
+          - .isel_with_drop: [!dag_prev , {batch: 0}]
+  transform:
+    - hist: [!dag_tag values]
+      kwargs:
+        dim: 'seed'
+        exclude_dim: [parameter]
+        bins: 100
+      tag: data
+  col: parameter
+  x: x
+  y: parameters
+  color: !dag_result c_darkblue
+  sharex: False
+  helpers:
+    set_labels:
+      x: ''
+      y: ''
+
+
+# -- plot of the simulations and errors using the predicted parameters -------------------------------------------------------
+
+# yaml-dantro-dag plot func that takes simulation data, residuals and bar heights alongside legends and plots them alltogether.
+# written to work in tandem with the evaluate_to_bars function above.
+
+model_pred:
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+    
+  helpers:
+    setup_figure:
+      ncols: 1
+      nrows: 3
+      sharex: false
+      figsize: [10, 5]
+
+    set_suptitle:
+      title: Real data vs model simulation using estimated parameters
+
+  to_plot:
+    [0, 0]:
+      - function: plt.plot
+        args:
+          - !dag_result time_coords
+          - !dag_result data
+        #label: !dag_result comp_labels
+        alpha: 0.2
+        linewidth: 0.4
+      - function: [matplotlib.pyplot, ylabel]
+        args: [inside temperature (°C)]
+      - function: [matplotlib.pyplot, xlabel]
+        args: [Time/s]
+    [0, 1]:
+      - function: plt.plot
+        args:
+          - !dag_result time_coords
+          - !dag_result delta
+        alpha: 0.2
+        linewidth: 0.4
+      - function: [matplotlib.pyplot, ylabel]
+        args: [derivation of the simulation (°C)]
+      - function: [matplotlib.pyplot, xlabel]
+        args: [Time/s]
+    [0, 2]:
+      - function: plt.bar
+        args:
+          - !dag_result bar_x
+          - !dag_result rmses
+        width: 0.05
+        color: "lightgray"
+        zorder: 1
+      - function: plt.bar
+        args:
+          - !dag_result bar_x
+          - !dag_result maes
+        width: 0.04
+        color: !dag_result bar_colors
+        zorder: 2
+      - function: [matplotlib.pyplot, xticks]
+        args: [!dag_result bar_x, !dag_result bar_ticks]
+        rotation: 45
+        rotation_mode: anchor
+        ha: right
+        va: top
+      - function: [matplotlib.pyplot, xlabel]
+        args: [!dag_result bar_legend]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [MAE (colored)/RMSE (grey)]
+
+
+
+
+
+
+

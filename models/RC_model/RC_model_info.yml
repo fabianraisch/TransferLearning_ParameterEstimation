@@ -1,0 +1,39 @@
+# An example manifest file that contains model information and can be used
+# to register a model in the utopya model registry
+#
+# NOTE Updating the information in this file does NOT automatically update the
+#      corresponding entries in the model registry! Call
+#
+#           utopya models register from-manifest [MANIFEST_FILE]...
+#
+#      for updating information in the model registry.
+---
+# -- General information and options
+model_name: RC_model
+project_name: NeuralABM
+
+# -- Path information, interpreted relative to this file
+paths:
+  executable: run.py
+  source_dir: ./
+  default_cfg: RC_model_cfg.yml
+  default_plots: RC_model_plots.yml
+  base_plots: RC_model_base_plots.yml
+  py_plots_dir: ../../model_plots/RC_model
+
+# -- Metadata
+metadata:
+  description: RC_model model with Neural core
+  long_description: >
+    This model calibrates an building RC model using a neural network
+  version: "0.1"
+  author: Timo Germann
+  license: LGPLv3+
+  language: python3
+  requirements:
+    - ruamel.yaml
+    - numpy
+    - h5py
+    - torch
+    - pandas
+  utopya_compatibility: ">=1.0.0a1"

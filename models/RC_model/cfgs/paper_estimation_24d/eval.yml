@@ -1,0 +1,2104 @@
+# Loss for each run
+losses/GA:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      type: [optimizer1]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/mlpv:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      type: [mlp0]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/Adam:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      type: [optimizer0]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/GE:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      type: [mlp1]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T1:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_21#Roo_19#Wea_Amsterdam#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T2:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T3:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T4:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_20.5#Roo_19#Wea_Munich#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T5:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_150000#FawSou_0.19#ZonLen_10#Roo_22.5#Roo_22#Wea_Bratislava#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T6:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T7:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_280000#FawSou_0.16#ZonLen_7#Roo_23#Roo_23#Wea_Bratislava#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+losses/T8:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_40000#FawSou_0.19#ZonLen_10#Roo_23#Roo_21.5#Wea_Amsterdam#Int_NoActivity]
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
+
+
+# Plot the predictions over time, colour-coded by loss
+predictions/mlpv:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [mlp0]
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue
+
+predictions/GE:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [mlp1]
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue
+
+predictions/Adam:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [optimizer0]
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue
+
+predictions/GA:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [optimizer1]
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue
+
+
+# Plot the marginals together
+marginals/mlpv:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      type: [mlp0]
+
+  transform:
+    - loss_to_probs: [!dag_tag loss]
+      kwargs:
+        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+        mlp: pure_negexp
+    - list_by_dims: [!dag_prev , [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - list_by_dims: [!dag_tag parameters, [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+      tag: broad
+
+  # generate coordinates for density plots over multiple paths
+    - .coords: [!dag_tag loss, path]
+    - list: [!dag_prev ]
+    - map_pathnames: [!dag_prev ]
+    - xr.DataArray:
+      kwargs:
+        data: !dag_prev
+        dims: path
+        coords:
+          path: !dag_prev
+      tag: new_coord
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 100
+        fit_kde: True
+      tag: list_data
+
+  # concat marginals for different paths along previously generated coordinate
+    - xr.concat: [!dag_prev ]
+      kwargs:
+        dim: !dag_tag new_coord
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+  store_csv: True
+
+marginals/GE:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      type: [mlp1]
+
+  transform:
+    - loss_to_probs: [!dag_tag loss]
+      kwargs:
+        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+        mlp: pure_negexp
+    - list_by_dims: [!dag_prev , [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - list_by_dims: [!dag_tag parameters, [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # generate coordinates for density plots over multiple paths
+    - .coords: [!dag_tag loss, path]
+    - list: [!dag_prev ]
+    - map_pathnames: [!dag_prev ]
+    - xr.DataArray:
+      kwargs:
+        data: !dag_prev
+        dims: path
+        coords:
+          path: !dag_prev
+      tag: new_coord
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 100
+        fit_kde: True
+      tag: list_data
+
+    # concat marginals for different paths along previously generated coordinate
+    - xr.concat: [!dag_prev ]
+      kwargs:
+        dim: !dag_tag new_coord
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+  store_csv: True
+
+_marginals/Adam:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      type: [optimizer0]
+
+  transform:
+    - loss_to_probs: [!dag_tag loss]
+      kwargs:
+        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+        mlp: pure_negexp
+    - list_by_dims: [!dag_prev , [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - list_by_dims: [!dag_tag parameters, [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+      tag: broad
+
+    # generate coordinates for density plots over multiple paths
+    - .coords: [!dag_tag loss, path]
+    - list: [!dag_prev ]
+    - map_pathnames: [!dag_prev ]
+    - xr.DataArray:
+      kwargs:
+        data: !dag_prev
+        dims: path
+        coords:
+          path: !dag_prev
+      tag: new_coord
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 200
+        fit_kde: True
+      tag: list_data
+
+    # concat marginals for different paths along previously generated coordinate
+    - xr.concat: [!dag_prev ]
+      kwargs:
+        dim: !dag_tag new_coord
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: y
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/GA:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      type: [optimizer1]
+
+  transform:
+    - loss_to_probs: [!dag_tag loss]
+      kwargs:
+        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+        mlp: pure_negexp
+
+    - list_by_dims: [!dag_prev , [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - list_by_dims: [!dag_tag parameters, [path]]
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+      tag: broad
+
+    # generate coordinates for density plots over multiple paths
+    - .coords: [!dag_tag loss, path]
+    - list: [!dag_prev ]
+    - map_pathnames: [!dag_prev ]
+    - xr.DataArray:
+      kwargs:
+        data: !dag_prev
+        dims: path
+        coords:
+          path: !dag_prev
+      tag: new_coord
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 200
+        fit_kde: True
+      tag: list_data
+
+    # concat marginals for different paths along previously generated coordinate
+    - xr.concat: [!dag_prev ]
+      kwargs:
+        dim: !dag_tag new_coord
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: y
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+
+
+marginals/csv:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  plot_func: marginals_to_csv
+  module: model_plots.RC_model.predicted_model
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+
+  transform:
+    - loss_to_probs: [!dag_tag loss]
+      kwargs:
+        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
+        mlp: pure_negexp
+
+    - list_by_dims: [!dag_prev , [path, type]]
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - list_by_dims: [!dag_tag parameters, [path, type]]
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+      tag: broad
+
+    # generate coordinates for density plots over multiple paths
+    - .coords: [!dag_tag loss, path]
+    - list: [!dag_prev ]
+    - map_pathnames: [!dag_prev ]
+      tag: path_coords
+    - .coords: [!dag_tag loss, type]
+    - .values: [!dag_prev ]
+    - list: [!dag_prev ]
+    - cart_prod_string: [!dag_tag path_coords, !dag_prev ]
+      tag: list_dims
+    - xr.DataArray:
+      kwargs:
+        data: !dag_prev
+        dims: path
+        coords:
+          path: !dag_prev
+      tag: new_coord
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 100
+        fit_kde: True
+      tag: list_data
+
+    # concat marginals for different paths along previously generated coordinate
+    - xr.concat: [!dag_prev ]
+      kwargs:
+        dim: !dag_tag new_coord
+      tag: data
+  list_data: !dag_result list_data
+  list_dims: !dag_result list_dims
+
+_marginals/T1:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_21#Roo_19#Wea_Amsterdam#Int_NoActivity]
+      
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/T2:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/T3:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+_marginals/T4:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_20.5#Roo_19#Wea_Munich#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/T5:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_150000#FawSou_0.19#ZonLen_10#Roo_22.5#Roo_22#Wea_Bratislava#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/T6:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/T7:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_280000#FawSou_0.16#ZonLen_7#Roo_23#Roo_23#Wea_Bratislava#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+_marginals/T8:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_40000#FawSou_0.19#ZonLen_10#Roo_23#Roo_21.5#Wea_Amsterdam#Int_NoActivity]
+
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+
+# plot the simulation of the model using the predicted parameters and the residuals.
+parameter_evaluation:
+  based_on:
+    - .creator.multiverse
+    - model_pred
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+      dt:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , dt]
+      rc_data: RC_data
+      start_index:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , data_used_up_to]
+  transform:
+    - evaluate_to_bars: [!dag_tag parameters, !dag_tag loss]
+      kwargs:
+        groupings: [type]
+        mean_over: [path]
+        #mean_over: [None]
+        # input evaluation method(s) for any parameter of the parameter space in an array
+        # it is recommended to only modify the eval methods of one sweep dimension (e.g. type)
+        # currently only works on string parameters and PLEASE DONT TOUCH THE MODEL TYPE
+        # (the tool was mainly designed for different evaluation for types, e.g. optimizer-last, optimizer-best)
+        eval_method:
+          optimizer: [best]
+          #mlp: [marginals, best]
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        bar_colors: [!dag_tag c_lightblue, !dag_tag c_darkblue, !dag_tag c_purple, !dag_tag c_red, !dag_tag c_orange, !dag_tag c_lightbrown]
+        bins: 100
+        horizon: 96
+        simulate_from_index: !dag_tag start_index
+        marginals_key: kde
+      tag: evaluation
+
+    # store the simulation results and plot args into accessible dag_tags
+    - getitem: [!dag_tag evaluation , simulation]
+      tag: simulation
+    - getitem: [!dag_tag simulation, 0]
+      tag: data
+    - getitem: [!dag_tag simulation, 1]
+      tag: delta
+    - getitem: [!dag_tag simulation, 2]
+      tag: maes 
+    - getitem: [!dag_tag simulation, 3]
+      tag: rmses 
+    - getitem: [!dag_tag evaluation, bar_ticks]
+      tag: bar_ticks
+    - getitem: [!dag_tag evaluation, time_coords]
+      tag: time_coords
+    - getitem: [!dag_tag evaluation, bar_colors]
+      tag: bar_colors
+    - getitem: [!dag_tag evaluation, bar_x]
+      tag: bar_x
+    - getitem: [!dag_tag evaluation, bar_ticks_x]
+      tag: bar_ticks_x
+    - getitem: [!dag_tag evaluation, groupings]
+    - str: [!dag_prev ]
+    - add: ["hyperparameters\t", !dag_prev ]
+      tag: bar_legend
+
+
+model_pred_csv:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  plot_func: export_simulation_to_csv
+  module: model_plots.RC_model.predicted_model
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+      dt:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , dt]
+      rc_data: RC_data
+      start_index:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , data_used_up_to]
+  transform:
+    - evaluate_to_bars: [!dag_tag parameters, !dag_tag loss]
+      kwargs:
+        groupings: [type]
+        mean_over: [path]
+
+        # input evaluation method(s) for any parameter of the parameter space in an array
+        # it is recommended to only modify the eval methods of one sweep dimension (e.g. type)
+        # currently only works on string parameters and PLEASE DONT TOUCH THE MODEL TYPE
+        # (the tool was mainly designed for different evaluation for types, e.g. optimizer-last, optimizer-best)
+        eval_method:
+          optimizer: [best]
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        bar_colors: [!dag_tag c_lightblue, !dag_tag c_darkblue, !dag_tag c_purple, !dag_tag c_red, !dag_tag c_orange, !dag_tag c_lightbrown]
+        bins: 100
+        horizon: 96
+        simulate_from_index: !dag_tag start_index
+        marginals_key: kde
+      tag: evaluation
+
+    # store the simulation results and plot args into accessible dag_tags
+    - getitem: [!dag_tag evaluation , simulation]
+      tag: simulation
+    - getitem: [!dag_tag evaluation, csv_heads]
+      tag: csv_heads
+  simulation: !dag_result simulation
+  csv_heads: !dag_result csv_heads
+
+training_data:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.line
+  universes: first
+  select:
+    data: RC_data
+  x: time
+  col: kind
+  col_wrap: 2
+  sharey: False
+
+
+
+  
+
+
+_mlppreds/T2:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+      model_type:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , model_type]
+      dt:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , dt]
+      rc_data:
+        path: RC_data
+        transform:
+          - getitem: [!dag_prev , 0]
+      start_index:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , data_used_up_to]
+         # - getitem: [!dag_prev , 0]
+    subspace:
+      type: [mlp0]
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity]
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    # format probabilites into 1D-array and broadcast it with loss
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+    #- pick_specific_sample: [!dag_prev , "best"]
+
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_prev ]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 200
+        fit_kde: True
+      tag: marginals
+    # simulate the model data
+    - simulate_model: !dag_prev 
+      kwargs:
+        marginals_key: kde
+        model_type: !dag_tag model_type
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        horizon: 96
+        simulate_from_index: !dag_tag start_index
+        #simulate_from_index: 0
+      tag: simulation
+    # select time array from data
+    - .coords: [!dag_tag rc_data, time]
+    - mul: [!dag_prev , !dag_tag dt]
+    - select_first_uni_time_coords: [!dag_prev ]
+    - .values: [!dag_tag dt]
+    - getitem: [!dag_prev , 0]
+      tag: single_dt
+    - getitem: [!dag_tag start_index, 0]
+    - np.arange: [!dag_prev , ]
+    - mul: [!dag_prev , !dag_tag single_dt]
+      tag: time_coords
+
+    - getitem: [!dag_tag simulation, 0]
+      tag: data
+    - getitem: [!dag_tag simulation, 1]
+      tag: delta
+    - getitem: [!dag_tag simulation, 2]
+      tag: mae
+    - getitem: [!dag_tag simulation, 3]
+      tag: rmse
+    - getitem: [!dag_tag simulation, 4]
+      tag: global_mae
+    - getitem: [!dag_tag simulation, 5]
+      tag: global_rmse
+    - prepare_error_label: [!dag_tag mae, !dag_tag rmse, !dag_tag global_mae, !dag_tag global_rmse]
+      tag: delta_label
+  helpers:
+    setup_figure:
+      ncols: 1
+      nrows: 2
+      sharex: true
+
+    set_suptitle:
+      title: Real data vs model simulation using estimated parameters
+
+    set_labels:
+      x: Time [indices, not seconds!]
+      only_label_outer: false
+  to_plot:
+    [0, 0]:
+      - function: plt.plot
+        args:
+  #          - !dag_result time_coords
+          - !dag_result data
+        label: [ground truth, simulated]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [inside temperature (°C)]
+      - function: [matplotlib.pyplot, legend]
+    [0, 1]:
+      - function: plt.plot
+        args:
+  #          - !dag_result time_coords
+          - !dag_result delta
+        label: [!dag_result delta_label]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [residuals (°C)]
+      - function: [matplotlib.pyplot, legend]
+
+  compute_only: []
+_mlppreds/margs_T2:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity]
+      type: [mlp0]
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+_mlppreds/preds_T2:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [mlp0]
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity]
+
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue
+_mlppreds/T3:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+      model_type:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , model_type]
+      dt:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , dt]
+      rc_data:
+        path: RC_data
+        transform:
+          - getitem: [!dag_prev , 0]
+      start_index:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , data_used_up_to]
+         # - getitem: [!dag_prev , 0]
+    subspace:
+      type: [mlp0]
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity]
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    # format probabilites into 1D-array and broadcast it with loss
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+    #- pick_specific_sample: [!dag_prev , "best"]
+
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_prev ]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 200
+        fit_kde: True
+      tag: marginals
+    # simulate the model data
+    - simulate_model: !dag_prev 
+      kwargs:
+        marginals_key: kde
+        model_type: !dag_tag model_type
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        horizon: 96
+        simulate_from_index: !dag_tag start_index
+        #simulate_from_index: 0
+      tag: simulation
+    # select time array from data
+    - .coords: [!dag_tag rc_data, time]
+    - mul: [!dag_prev , !dag_tag dt]
+    - select_first_uni_time_coords: [!dag_prev ]
+    - .values: [!dag_tag dt]
+    - getitem: [!dag_prev , 0]
+      tag: single_dt
+    - getitem: [!dag_tag start_index, 0]
+    - np.arange: [!dag_prev , ]
+    - mul: [!dag_prev , !dag_tag single_dt]
+      tag: time_coords
+
+    - getitem: [!dag_tag simulation, 0]
+      tag: data
+    - getitem: [!dag_tag simulation, 1]
+      tag: delta
+    - getitem: [!dag_tag simulation, 2]
+      tag: mae
+    - getitem: [!dag_tag simulation, 3]
+      tag: rmse
+    - getitem: [!dag_tag simulation, 4]
+      tag: global_mae
+    - getitem: [!dag_tag simulation, 5]
+      tag: global_rmse
+    - prepare_error_label: [!dag_tag mae, !dag_tag rmse, !dag_tag global_mae, !dag_tag global_rmse]
+      tag: delta_label
+  helpers:
+    setup_figure:
+      ncols: 1
+      nrows: 2
+      sharex: true
+
+    set_suptitle:
+      title: Real data vs model simulation using estimated parameters
+
+    set_labels:
+      x: Time [indices, not seconds!]
+      only_label_outer: false
+  to_plot:
+    [0, 0]:
+      - function: plt.plot
+        args:
+  #          - !dag_result time_coords
+          - !dag_result data
+        label: [ground truth, simulated]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [inside temperature (°C)]
+      - function: [matplotlib.pyplot, legend]
+    [0, 1]:
+      - function: plt.plot
+        args:
+  #          - !dag_result time_coords
+          - !dag_result delta
+        label: [!dag_result delta_label]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [residuals (°C)]
+      - function: [matplotlib.pyplot, legend]
+
+  compute_only: []
+_mlppreds/margs_T3:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity]
+      type: [mlp0]
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+_mlppreds/preds_T3:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [mlp0]
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity]
+
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue
+_mlppreds/T6:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+      model_type:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , model_type]
+      dt:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , dt]
+      rc_data:
+        path: RC_data
+        transform:
+          - getitem: [!dag_prev , 0]
+      start_index:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , data_used_up_to]
+         # - getitem: [!dag_prev , 0]
+    subspace:
+      type: [mlp0]
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity]
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    # format probabilites into 1D-array and broadcast it with loss
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+    #- pick_specific_sample: [!dag_prev , "best"]
+
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_prev ]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 200
+        fit_kde: True
+      tag: marginals
+    # simulate the model data
+    - simulate_model: !dag_prev 
+      kwargs:
+        marginals_key: kde
+        model_type: !dag_tag model_type
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        horizon: 96
+        simulate_from_index: !dag_tag start_index
+        #simulate_from_index: 0
+      tag: simulation
+    # select time array from data
+    - .coords: [!dag_tag rc_data, time]
+    - mul: [!dag_prev , !dag_tag dt]
+    - select_first_uni_time_coords: [!dag_prev ]
+    - .values: [!dag_tag dt]
+    - getitem: [!dag_prev , 0]
+      tag: single_dt
+    - getitem: [!dag_tag start_index, 0]
+    - np.arange: [!dag_prev , ]
+    - mul: [!dag_prev , !dag_tag single_dt]
+      tag: time_coords
+
+    - getitem: [!dag_tag simulation, 0]
+      tag: data
+    - getitem: [!dag_tag simulation, 1]
+      tag: delta
+    - getitem: [!dag_tag simulation, 2]
+      tag: mae
+    - getitem: [!dag_tag simulation, 3]
+      tag: rmse
+    - getitem: [!dag_tag simulation, 4]
+      tag: global_mae
+    - getitem: [!dag_tag simulation, 5]
+      tag: global_rmse
+    - prepare_error_label: [!dag_tag mae, !dag_tag rmse, !dag_tag global_mae, !dag_tag global_rmse]
+      tag: delta_label
+  helpers:
+    setup_figure:
+      ncols: 1
+      nrows: 2
+      sharex: true
+
+    set_suptitle:
+      title: Real data vs model simulation using estimated parameters
+
+    set_labels:
+      x: Time [indices, not seconds!]
+      only_label_outer: false
+  to_plot:
+    [0, 0]:
+      - function: plt.plot
+        args:
+  #          - !dag_result time_coords
+          - !dag_result data
+        label: [ground truth, simulated]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [inside temperature (°C)]
+      - function: [matplotlib.pyplot, legend]
+    [0, 1]:
+      - function: plt.plot
+        args:
+  #          - !dag_result time_coords
+          - !dag_result delta
+        label: [!dag_result delta_label]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [residuals (°C)]
+      - function: [matplotlib.pyplot, legend]
+
+  compute_only: []
+_mlppreds/margs_T6:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.density
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss: loss
+    subspace:
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity]
+      type: [mlp0]
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_prev , 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+
+    - cut_nans_from_dataset: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+
+    - cut_nans_from_dataset: [!dag_prev ]
+    - flatten_dims_except: [!dag_prev , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+    #- filter_loss: [!dag_prev , 4.48]
+   #   - pick_specific_sample: [!dag_prev , "best"]
+      tag: broad
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_tag broad]
+      kwargs:
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 500
+        fit_kde: True
+      tag: data
+
+  alpha: 0.7
+  linewidth: 0.6
+  x: x
+  y: kde
+  col: parameter
+  hue: path
+  sharex: False
+  sharey: False
+_mlppreds/preds_T6:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.scatter
+  select_and_combine:
+    fields:
+      parameters:
+        path: parameters
+        transform: [.data]
+      loss:
+        path: loss
+        transform: [.data]
+    subspace:
+      type: [mlp0]
+      path: [data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity]
+
+  transform:
+    - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
+    - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
+      tag: data
+  x: batch
+  y: x
+  hue: loss
+  col: parameter
+  marker: .
+  linewidths: 0          # Removes white outline
+  edgecolors: none       # No edge color
+  sharey: False # Seems to have no effect?
+  sharex: False
+  helpers:
+    set_limits:
+      x: [min, max]
+      y: [0, max] # Why is this necessary?
+  add_legend: False
+  norm:
+    name: LogNorm
+  cmap:
+    continuous: true
+    from_values:
+      0: !dag_result c_yellow
+      0.2: !dag_result c_orange
+      0.4: !dag_result c_pink
+      0.6: !dag_result c_purple
+      0.8: !dag_result c_lightblue
+      1: !dag_result c_darkblue

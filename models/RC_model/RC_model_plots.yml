@@ -1,0 +1,201 @@
+# ======================================================================================================================
+#  ╔═╗╦  ╔═╗╔╦╗╔═╗
+#  ╠═╝║  ║ ║ ║ ╚═╗
+#  ╩  ╩═╝╚═╝ ╩ ╚═╝
+# ======================================================================================================================
+# Plot the evolution of the training loss
+
+loss:
+  based_on: loss
+  style:
+    figure.figsize: [ !dag_result full_width, !dag_result third_width ]
+
+# Plot the training data:
+training_data:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.line
+  select:
+    data: RC_data
+  col: kind
+  col_wrap: 2
+  sharey: False
+
+# Plot the evolution of the parameters
+predictions:
+  based_on: predictions_uni
+
+# Plot the marginals on all the parameters
+marginals:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.density
+  select:
+    parameters:
+      path: parameters
+      transform: [.data]
+    loss:
+      path: loss
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+
+    - broadcast: [!dag_tag parameters, !dag_tag probabilities]
+    - marginal_from_ds: [!dag_prev ]
+      kwargs:
+        x: x
+        y: loss
+        statistic: mean
+        exclude_dim: [parameter]
+      tag: data
+  x: x
+  y: y
+  sharex: False
+  sharey: False
+  col: parameter
+  smooth_kwargs:
+    enabled: True
+    smoothing: 2
+
+# plot a simulation of the physical model using the parameters with the HIGHEST marginals
+model_pred:
+  based_on:
+    - .creator.universe
+  creator: universe
+  universes: all
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select:
+    parameters:
+      path: parameters
+      transform: [.data]
+    loss:
+      path: loss
+    model_type:
+      path: parameters
+      transform:
+        - .attrs
+        - getitem: [!dag_prev , model_type]
+    dt:
+      path: parameters
+      transform:
+        - .attrs
+        - getitem: [!dag_prev , dt]
+    rc_data:
+      path: RC_data
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    - broadcast: [!dag_tag parameters, !dag_tag probabilities]
+    - marginal_from_ds: [!dag_prev ]
+      kwargs:
+        x: x
+        y: loss
+        statistic: mean
+        exclude_dim: [parameter]
+      tag: marginals
+    - simulate_model: !dag_prev 
+      kwargs:
+        model_type: !dag_tag model_type
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        mode: sim
+      tag: data
+    - simulate_model: !dag_tag marginals
+      kwargs:
+        model_type: !dag_tag model_type
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        mode: delta
+      tag: delta
+  helpers:
+    setup_figure:
+      ncols: 1
+      nrows: 2
+      sharex: true
+
+    set_suptitle:
+      title: Real data vs model simulation using estimated parameters
+
+    set_labels:
+      x: Time
+      only_label_outer: false
+  to_plot:
+    [0, 0]:
+      - function: plt.plot
+        args:
+          - !dag_result data
+        label: [true_data, simulated]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [inside temperature (°C)]
+      - function: [matplotlib.pyplot, legend]
+    [0, 1]:
+      - function: plt.plot
+        args:
+          - !dag_result delta
+        label: [residuals, MAE]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [derivation of the simulation (°C)]
+      - function: [matplotlib.pyplot, legend]
+
+
+# plot a 2-dimensional partially filled heatmap of the exploration of a 2-parameter-space.
+# configure the parameters to show below
+joint:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.pcolormesh
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss:
+        path: loss
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
+      tag: params
+
+    # Compute the joint
+    - joint_2D_ds: [!dag_tag params, !dag_tag prob]
+      # CHANGE PARAMETERS TO DISPLAY HERE
+      kwargs:
+        x: R
+        y: C
+      tag: data
+  # AND HERE (parameter names correspond to the chosen physical model)
+  x: R
+  y: C
+  cbar_kwargs:
+    label: ~
+  style:
+    figure.figsize: [!dag_result half_width, !dag_result half_width]
+
+# plot the initialization of the hidden states during training, if the physical model contains some
+hidden_states:
+  based_on:
+    - .creator.universe
+    - .plot.facet_grid.line
+  select:
+    data: hidden_states
+  color: black
+  helpers:
+    set_labels:
+      x: Batch
+      y: Hidden state initial value
+  style:
+    figure.figsize: [ !dag_result full_width, !dag_result third_width ]
+
+

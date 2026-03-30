@@ -1,0 +1,82 @@
+Data:
+  model_type: RC
+  synthetic_data:
+    initial_conditions:
+      T_in: 291
+    store_raw_QSolar: false
+    effWinArea: 5 #[m2]
+    maxHeatingPower: 5000 #[W]
+    controller: PControl #PControl | TwoPointControl
+    weather_data: data/RC_model/weatherData/Munich_5years.mos
+    T_min: 290 #[K]
+    T_max: 294 #[K]
+    num_steps: 3000
+    C: 7452000 # first entries taken from  Identifying suitable models for the heat dynamics of buildings: Peder Bacher, Henrik Madsen
+    R: 0.00529
+    C1: 3852000.0
+    R1: 0.000863
+    C2: 5004.0
+    R2: 0.0934
+    C3: 10512000.0
+    R3: 0.00454
+    A_eff: 7.89
+  dt: 300
+
+# Settings for the neural network
+NeuralNet:
+  type: mlp # lstm | mlp | optimizer | external
+  lookback: 96 #amount of timesteps input for param estimation
+  num_layers: !is-positive-int 3
+  nodes_per_layer:
+    default: !is-positive-int 20
+  biases:
+    default: [0, 1]
+  activation_funcs:
+    default: sigmoid
+    layer_specific:
+      -1: abs
+  learning_rate: !is-positive 0.002
+  optimizer: Adam # Adam, GA
+  prior:
+    distribution: uniform
+    parameters:
+      lower: 0
+      upper: 1
+
+# Settings for the training
+Training:
+  train_range: 1.0 #define in indices or percent
+  val_range: 0.0
+  mode: predict # predict | generalize | single-input 
+  model_type: RC
+  batch_size: !is-positive-int 1
+  slicing_difference: 96
+  loss_function:
+    name: RMSELoss
+    kwargs:
+      reduction: sum
+  device: cpu
+  num_threads: ~
+
+  # Can scale parameters here
+  scaling_factors:
+    C: 10.0e6
+    R: 10.0e-3
+    C1: 10.0e6
+    R1: 10.0e-3
+    C2: 10.0e6
+    R2: 10.0e-3
+    C3: 10.0e6
+    R3: 10.0e-3
+    A_eff: 10
+
+Tuning:
+  perform: False
+  study_name: "tuning"
+  study_n_trials: 10
+  epochs_tuning: 3
+  seeds_per_trial: 5 # -> immer range(5)
+  n_jobs: 4
+  hyperparam_ranges:
+    learning_rate: [1.0e-5, 1.0e-2, "NeuralNet", "float"]
+    nodes_per_layer/default: [32, 256, "NeuralNet", "int", 32]

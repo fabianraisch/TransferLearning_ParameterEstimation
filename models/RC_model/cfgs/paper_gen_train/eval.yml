@@ -1,0 +1,31 @@
+# Loss for each run
+loss:
+  based_on:
+    - .creator.multiverse
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
+  select_and_combine:
+    fields:
+      loss_multi: loss
+  transform:
+    - print: [!dag_tag loss_multi]
+    - flatten_dims_except: [!dag_tag loss_multi, batch, uni]
+      tag: loss
+    - .coords: [!dag_prev ]
+    - getitem: [!dag_prev , batch]
+    - .data: [!dag_prev ]
+      tag: x
+  to_plot:
+    - function: plt.semilogy
+      args:
+        - !dag_result x
+        - !dag_result loss
+  compute_only: [] #something about multiplot not liking data input through that interface
+  alpha: 0.2
+  helpers:
+    set_labels:
+      x: Batch
+      y: Training loss
+    set_legend:
+      use_legend: False
