@@ -16,16 +16,16 @@ parameter_space:
       dt: 900
       load_from_dir:
         path: !sweep
-          default: data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity
+          default: data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T1
           values:
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_21#Roo_19#Wea_Amsterdam#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.25#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_21#Wea_Bratislava#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_150000#FawSou_0.16#ZonLen_7#Roo_23#Roo_20#Wea_Amsterdam#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.55#HeaWal_280000#FawSou_0.19#ZonLen_10#Roo_20.5#Roo_19#Wea_Munich#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_150000#FawSou_0.19#ZonLen_10#Roo_22.5#Roo_22#Wea_Bratislava#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_0.85#HeaWal_40000#FawSou_0.16#ZonLen_7#Roo_22#Roo_19.5#Wea_Munich#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_280000#FawSou_0.16#ZonLen_7#Roo_23#Roo_23#Wea_Bratislava#Int_NoActivity
-            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/#Uex_1.15#HeaWal_40000#FawSou_0.19#ZonLen_10#Roo_23#Roo_21.5#Wea_Amsterdam#Int_NoActivity
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T1
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T2
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T3
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T4
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T5
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T6
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T7
+            - data/RC_model/NN_parameter_estimation/8targets_nnEstim_noWin_inhom_noAct/T8
         csv_keys: [thermalZone.TAir, weaBus.TDryBul, totalHeatingPower.y, weaDat.weaBus.HGloHor]
         effWinArea: 1
         subset: 8640 # 3 months
