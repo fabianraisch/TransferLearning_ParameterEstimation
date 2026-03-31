@@ -23,7 +23,7 @@ As a simulation framework, this code uses the [utopya package](https://docs.utop
   * [Loading data](#loading-data)
 * [Models overview](#models-overview)
 * [Building your own model](#building-your-own-model)
-* [Citation](#citataion)
+* [Citation](#citation)
 
 ---
 # Installation
