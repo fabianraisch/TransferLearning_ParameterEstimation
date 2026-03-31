@@ -1,5 +1,5 @@
 # Neural parameter calibration of ODEs and SDEs
-### Timo Germann, Fabian Raisch
+### Fabian Raisch, Timo Germann
 
 ---
 
