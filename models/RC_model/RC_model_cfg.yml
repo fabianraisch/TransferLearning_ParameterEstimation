@@ -25,7 +25,7 @@ Data:
 # Settings for the neural network
 NeuralNet:
   type: mlp # lstm | mlp | optimizer | external
-  lookback: 96 #amount of timesteps input for param estimation
+  lookback: 1 #amount of timesteps input for param estimation
   num_layers: !is-positive-int 3
   nodes_per_layer:
     default: !is-positive-int 20
@@ -46,7 +46,7 @@ NeuralNet:
 # Settings for the training
 Training:
   train_range: 1.0 #define in indices or percent
-  val_range: 0.0
+  val_range: 0.0 #we usually don't need to validate
   mode: predict # predict | generalize | single-input 
   model_type: RC
   batch_size: !is-positive-int 1

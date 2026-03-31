@@ -84,10 +84,8 @@ marginals_all:
       loss: loss
 
   transform:
-    # Divide the loss by the median to prevent numerical underflow
-    - .median: [!dag_tag loss, 'batch']
-    - div: [!dag_tag loss, !dag_prev ]
-    - neg_exp: [!dag_prev ]
+    # convert the loss into probabilities
+    - neg_exp: [!dag_tag loss ]
       tag: probabilities
 
     # Flatten the prob and parameter samples into a single dimension
@@ -103,7 +101,6 @@ marginals_all:
         x: x
         y: loss
         exclude_dim: [parameter]
-        bins: 50
       tag: data
   c: !dag_result c_darkblue
   x: x
@@ -140,10 +137,8 @@ model_pred:
         transform:
           - getitem: [!dag_prev , 0]
   transform:
-    # Divide the loss by the median to prevent numerical underflow
-    - .median: [!dag_tag loss, 'batch']
-    - div: [!dag_tag loss, !dag_prev ]
-    - neg_exp: [!dag_prev ]
+    # Transform the loss into probabilities
+    - neg_exp: [!dag_tag loss ]
       tag: probabilities
     # format probabilites into 1D-array and broadcast it with loss
     - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
@@ -158,7 +153,6 @@ model_pred:
         x: x
         y: loss
         exclude_dim: [parameter]
-        bins: 50
       tag: marginals
 
     # simulate the model data
@@ -168,7 +162,6 @@ model_pred:
         dt: !dag_tag dt
         rc_data: !dag_tag rc_data
         mode: sim
-        horizon: 96
         simulate_from_index: 960
       tag: data
 
@@ -179,7 +172,6 @@ model_pred:
         dt: !dag_tag dt
         rc_data: !dag_tag rc_data
         mode: delta
-        horizon: 96
         simulate_from_index: 960
       tag: delta
 

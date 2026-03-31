@@ -3,7 +3,9 @@ parameter_space:
   seed: !sweep
     default: 1
     range: [8]
-  num_epochs: 30
+
+  num_epochs: 50
+
   RC_model:
 
     # Settings for the neural network
@@ -11,16 +13,13 @@ parameter_space:
       type: mlp
       lookback: 96 #amount of timesteps input for param estimation | 4 or 96
 
-      num_layers: 2 
+      num_layers: 3
       nodes_per_layer:
-        default: 140
-      learning_rate: 0.0029
+        default: 20
       optimizer: Adam
 
     # Settings for the training
     Training:
-      train_range: [0, 960] #use 10 days of data for training
-      test_range: [960, 1152] # and the following 2 days for testing
       mode: predict
 
 
@@ -35,6 +34,6 @@ parameter_space:
 
       # Can scale parameters here
       scaling_factors:
-        C: 1.0e7 
-        R: 1.0e-3
+        C: 1.0e7
+        R: 1.0e-2
         A_eff: 10

@@ -37,10 +37,8 @@ marginals:
     loss:
       path: loss
   transform:
-    # Divide the loss by the median to prevent numerical underflow
-    - .median: [!dag_tag loss, 'batch']
-    - div: [!dag_tag loss, !dag_prev ]
-    - neg_exp: [!dag_prev ]
+    # Transform the loss into probabilities
+    - neg_exp: [!dag_tag loss ]
       tag: probabilities
 
     - broadcast: [!dag_tag parameters, !dag_tag probabilities]
@@ -87,10 +85,8 @@ model_pred:
     rc_data:
       path: RC_data
   transform:
-    # Divide the loss by the median to prevent numerical underflow
-    - .median: [!dag_tag loss, 'batch']
-    - div: [!dag_tag loss, !dag_prev ]
-    - neg_exp: [!dag_prev ]
+    # Transform the loss into probabilities
+    - neg_exp: [!dag_tag loss ]
       tag: probabilities
     - broadcast: [!dag_tag parameters, !dag_tag probabilities]
     - marginal_from_ds: [!dag_prev ]
@@ -106,6 +102,7 @@ model_pred:
         dt: !dag_tag dt
         rc_data: !dag_tag rc_data
         mode: sim
+        simulate_from_index: 960
       tag: data
     - simulate_model: !dag_tag marginals
       kwargs:
@@ -113,6 +110,7 @@ model_pred:
         dt: !dag_tag dt
         rc_data: !dag_tag rc_data
         mode: delta
+        simulate_from_index: 960
       tag: delta
   helpers:
     setup_figure:
@@ -139,7 +137,7 @@ model_pred:
       - function: plt.plot
         args:
           - !dag_result delta
-        label: [residuals, MAE]
+        label: residuals
       - function: [matplotlib.pyplot, ylabel]
         args: [derivation of the simulation (°C)]
       - function: [matplotlib.pyplot, legend]
