@@ -654,7 +654,7 @@ _marginals/csv:
   list_dims: !dag_result list_dims
 
 # plot the simulation of the model using the predicted parameters and the residuals.
-_parameter_evaluation:
+parameter_evaluation:
   based_on:
     - .creator.multiverse
     - model_pred

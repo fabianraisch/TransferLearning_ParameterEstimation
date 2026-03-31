@@ -147,32 +147,24 @@ def simulate(
         global_mae = np.array([np.sum(np.abs(d)/d.shape[0]) for d in delta])
         global_rmse = np.array([np.sqrt((d**2).sum()/d.shape[0]) for d in delta])
     if mean_over != None or mean_over != "None":
-        print(mae)
-        print(rmse)
-        print(global_mae)
-        print(global_rmse)
         mae = np.array([np.mean(mae[i*mean_over:(i+1)*mean_over]) for i in range(int(len(mae)/mean_over))])
         rmse = np.array([np.mean(rmse[i*mean_over:(i+1)*mean_over]) for i in range(int(len(rmse)/mean_over))])
         global_mae = np.array([np.mean(global_mae[i*mean_over:(i+1)*mean_over]) for i in range(int(len(global_mae)/mean_over))])
         global_mae = np.array([np.mean(mae[i*mean_over:(i+1)*mean_over]) for i in range(int(len(global_rmse)/mean_over))])
-        print(mae)
-        print(rmse)
-        print(mae.shape)
-    sim_out = np.array([torch.Tensor(rc_data[np.argmax([data.shape[0] for data in rc_data])][:, 0])] + [pad_arr_with_nans(sim[0, :, 0, 0], longest_data.shape[0]) for i, sim in enumerate(all_sims)]).T
+    sim_out = np.array([np.array(rc_data[np.argmax([data.shape[0] for data in rc_data])][:, 0])] + [pad_arr_with_nans(sim[0, :, 0, 0], longest_data.shape[0]) for i, sim in enumerate(all_sims)]).T
     delta_out = np.array([pad_arr_with_nans(delt, longest_data.shape[0]) for delt in delta]).T
     if mode == None:
         return sim_out, delta_out, mae, rmse, global_mae, global_rmse
     # add real data along axis 2 or compute delta depending on mode
     if mode == "sim":
 
-        out = torch.cat([torch.Tensor(rc_data[i])[:, :1]] + [sim[0, :, :1, 0] for i, sim in enumerate(all_sims)], axis = 1)
-        #print(out.shape)
-        return out
+        return sim_out[simulate_from_index:]
+    elif mode == "delta":
+        return np.array(delta).T[simulate_from_index:]
     elif mode == "mae":
         delta = [(sim[0, :, :physical[i].dynamic_variables, 0] - torch.Tensor(rc_data[i])[:,:physical[i].dynamic_variables])[:, 0] for i, sim in enumerate(all_sims)]
         mae = np.array([np.sum(np.abs(np.array(d))/d.shape[0]) for d in delta])
-        #print(mae)
-        return mae
+        return mae[simulate_from_index:]
     else:
         delta = [(sim[0, :, :physical[i].dynamic_variables, 0] - torch.Tensor(rc_data[i])[:,:physical[i].dynamic_variables])[:, 0].numpy() for i, sim in enumerate(all_sims)]
         mae = np.array([np.ones(d.shape[0])*np.sum(np.abs(np.array(d))/d.shape[0]) for d in delta])

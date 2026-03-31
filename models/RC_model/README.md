@@ -81,6 +81,26 @@ For coupled sweeps, to undermine the duplication-detection utopya implements, Op
 
 While in the original code, the estimated parameters were only presented by means of densities, our RC_model also uses these parameters to evaluate their performance by running a simulation and benchmarking it against a testset. These results are usually shown in a `model_pred.pdf` and give further insight to the quality of the parameters estimated.
 
-### Misuse of sweeping
+### Abuse of sweeping
 
 Conversely to Th. Gaskins implementation did we also use the sweep mechanism to immediately compare different hyperparameter configs (e.g. directly benchmarking a direct optimization using a Genetic Algorithm agains the MLP approach). These extra sweeping dimensions are later separated again in the eval.yml files, using either the `select_and_combine.subspace` keys or converting the dimension into a list and processing the data in parallel downstream. This all can also happen behind the scenes by using the `evaluate_to_bars` transform function. The kwargs `groupings` and `mean_over` refer to the run.yml keys that are swept over and respectively plot the results next to each other or mean over them.
+
+
+## Some notes about the use of utopya
+
+Since, as a non full-time python developer had a lot of struggles getting used to the layered config system and syntax of the yaml/dantro DAG system, here are some notes that I would have found helpful in the beginning of developement:
+
+- Utopya layers its config files. The config set passed via --cs is applied to the base `RC_model_cfg` in this model's directory, which is in return applied to the projects base config `[repo]/cfg/multiverse_project_cfg.yml` which, for example, contains the epoch count.
+- When the config is assembled, utopya calls `models/RC_model/run.py`. This is the entrypoint for all custom developing. From there on until evaluation, all computation happens purely in python for most easy to understand.
+- The evaluation config files work in a similar way to the run configs: For each high-level entry in the eval.yml, one pdf is created. Plot blueprints and helper functions (like `.plot.facet_grid.scatter` passed through the `based_on` key or `evaluate_to_bars` in the transform block) can be taken from plot configs "further down the hierarchy", e.g. `models/RC_model/RC_model_base_plots.yml` or `[repo]/project_base_plots.yml`. Additionally, python functions with the decorator `@is_operation` are also available for use in the `eval.yml` (e.g. `flatten_dims_except`, which resides in `model_plots/RC_model/data_evaluation_utils.py`). You will see a lot of the RC model evaluation logic there.
+- A classic plot config usually contains a `based_on` entry that tells utopya which kind of plot is desired and in which way to prepare the data, a `select_and_combine` (for multiverse evaluations) or a `select` (for universe evaluations) block where xr.DataSet datafields can be stored in so-called DAG-tags, and a `transform` block, which contains data transformations that are applied before the data is plotted. After the transform block usually follows the plot function (as in `models/RC_model/RC_model_plots` in the `model_plred` plot) Other times, the plot function implicitly is included in the `based_on` configurations, therefore it usually is not explicitly visible. Take a look at the `based_on` plot configs to find out more. It is also possible to write your own plot function in python, this has been used to export data to csvs, for example (see `models/RC_model/cfgs/paper_estimation_72d/eval.ym` around line 1380:
+
+```yaml
+based_on:
+    - .creator.multiverse
+  creator: multiverse
+  plot_func: export_simulation_to_csv
+  module: model_plots.RC_model.data_evaluation_utils
+```
+here, the corresplonding plot function is, again, implemented in `model_plots/RC_model/data_evaluation_utils` and correspondingly decorated)
+- Singular plots can easly be deactivated by starting the entries with an underscore (`_`)

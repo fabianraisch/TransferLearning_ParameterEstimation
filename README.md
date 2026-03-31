@@ -13,7 +13,6 @@ As a simulation framework, this code uses the [utopya package](https://docs.utop
 
 ### Contents of this README
 * [How to install](#installation)
-  * [Installation on Windows](#installation-on-windows) 
 * [Tutorial](#tutorial)
   * [How to run a model](#how-to-run-a-model)
   * [Parameter sweeps](#parameter-sweeps)
@@ -130,16 +129,16 @@ Open the `eval` folder — in it there will be a further time-stamped folder. Ev
 
 You can see the true data (orange) together with the neural net predictions (blue) and an error estimate (blue shaded area).
 The results aren't great; you will also notice from the `loss.pdf` plot that the training loss has barely decreased. Why? Well, 
-take a look at the `RC_model_cfg.yml` file. This file holds all the default parameters for the model run. Scroll down to the `Training` entry: you will notice the `lookback` is set to 1. This means that the neural network performs a gradient descent step every time it has reproduced a single frame of the time series. Further above, you will notice that the synthetic dataset used to train the model has a length of `num_steps: 100`. For these thermal dynamics, let's see if letting the neural network see the whole time series for each gradient descent step would improve things. You could change the lookback in the `RC_model_cfg.yml` file directly, but actually this is not recommended: this file holds all the default values the model will fall back on, should something go wrong. Instead create a new `run.yml` file, somewhere on your computer, and copy the following entries into it:
+take a look at the `RC_model_cfg.yml` file. This file holds all the default parameters for the model run. Scroll down to the `Training` entry: you will notice the `lookback` is set to 1. This means that the neural network performs a gradient descent step every time it has reproduced a single frame of the time series. Further above, you will notice that the synthetic dataset used to train the model has a length of `num_steps: 1152` (with a dt of 900s = 15min that accounts for 12 days). For these thermal dynamics, let's see if letting the neural network see one day of data for each gradient descent step would improve things. You could change the lookback in the `RC_model_cfg.yml` file directly, but actually this is not recommended: this file holds all the default values the model will fall back on, should something go wrong. Instead create a new `run.yml` file, somewhere on your computer, and copy the following entries into it:
 
 ```yaml
 parameter_space:
   num_epochs: 50
   RC_model:
     Training:
-      lookback: 100
+      lookback: 96
 ```
-We are now using a lookback of 100, i.e. the length of the time series, and are also training the model for a little bit longer (50 epochs instead of the default 10). Now, run the model again and pass the path to this file to the model:
+We are now using a lookback of 96, i.e. the length of the time series, and are also training the model for a little bit longer (50 epochs instead of the default 10). Now, run the model again and pass the path to this file to the model:
 
 ```commandline
 utopya run RC_model path/to/run.yml

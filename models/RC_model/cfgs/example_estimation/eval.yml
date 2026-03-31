@@ -44,8 +44,6 @@ predictions:
       loss:
         path: loss
         transform: [.data]
-    subspace:
-      type: [optimizer1]
   transform:
     - broadcast_dims: [!dag_tag parameters, !dag_tag loss, [batch, parameter]]
     - flatten_dims_except: [!dag_prev , [parameter, batch], sample]
@@ -62,15 +60,15 @@ predictions:
   helpers:
     set_limits:
       x: [min, max]
-      y: [0, max] # Why is this necessary?
+      y: [0, max] 
   add_legend: False
   norm:
     name: LogNorm
   cmap: &cmap
     continuous: true
     from_values:
-      0: !dag_result c_darkblue
-      #0.5: !dag_result c_darkblue
+      0: !dag_result c_purple
+      0.5: !dag_result c_darkblue
       1: !dag_result c_yellow
 
 
@@ -86,111 +84,137 @@ marginals_all:
       loss: loss
 
   transform:
-    - loss_to_probs: [!dag_tag loss]
-      kwargs:
-        optimizer: just_negate_loss #just_negate_loss, subtract_min, divide_by_median, pure_negexp
-        mlp: pure_negexp
-    - list_by_dims: [!dag_prev , [type]]
-    - cut_nans_from_dataset: [!dag_prev ]
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
       tag: probabilities
-    # Flatten the prob and parameter samples into a single dimension
-    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
-      tag: prob
 
-    - list_by_dims: [!dag_tag parameters, [type]]
-    - cut_nans_from_dataset: [!dag_prev ]
-    - flatten_dims_except: [!dag_prev , parameters, sample]
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample] # not executed?
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
       tag: params
     - broadcast: [!dag_tag params, !dag_tag prob]
-      tag: broad
 
     # Get the marginals along the parameters
-    - marginal_from_ds: [!dag_tag broad]
+    - marginal_from_ds: [!dag_prev ]
       kwargs:
         x: x
         y: loss
         exclude_dim: [parameter]
-        bins: 200
+        bins: 50
       tag: data
-
-  alpha: 0.4
-  linewidth: 0.6
+  c: !dag_result c_darkblue
   x: x
-  y: kde
+  y: y
   col: parameter
-  hue: type
   sharex: False
   sharey: False
 
 
 
-# plot the simulation of the model using the predicted parameters and the residuals.
-parameter_evaluation:
+
+model_pred:
   based_on:
     - .creator.multiverse
-    - model_pred
+  creator: multiverse
+  module: dantro.plot.funcs
+  plot_func: multiplot
   select_and_combine:
     fields:
       parameters: parameters
       loss: loss
+      model_type:
+        path: parameters
+        transform:
+          - .attrs
+          - getitem: [!dag_prev , model_type]
       dt:
         path: parameters
         transform:
           - .attrs
           - getitem: [!dag_prev , dt]
-      rc_data: RC_data
-      start_index:
-        path: parameters
+      rc_data:
+        path: RC_data
         transform:
-          - .attrs
-          - getitem: [!dag_prev , data_used_up_to]
+          - getitem: [!dag_prev , 0]
   transform:
-    - evaluate_to_bars: [!dag_tag parameters, !dag_tag loss]
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    # format probabilites into 1D-array and broadcast it with loss
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
+      tag: params
+    - broadcast: [!dag_tag params, !dag_tag prob]
+
+    # Get the marginals along the parameters
+    - marginal_from_ds: [!dag_prev ]
       kwargs:
-        groupings: [None]
-        mean_over: [None]
-        #mean_over: [None]
-        # input evaluation method(s) for any parameter of the parameter space in an array
-        # it is recommended to only modify the eval methods of one sweep dimension (e.g. type)
-        # currently only works on string parameters and PLEASE DONT TOUCH THE MODEL TYPE
-        # (the tool was mainly designed for different evaluation for types, e.g. optimizer-last, optimizer-best)
-        eval_method:
-          optimizer: [best]
-          #mlp: [marginals, best]
+        x: x
+        y: loss
+        exclude_dim: [parameter]
+        bins: 50
+      tag: marginals
+
+    # simulate the model data
+    - simulate_model: !dag_prev 
+      kwargs:
+        model_type: !dag_tag model_type
         dt: !dag_tag dt
         rc_data: !dag_tag rc_data
-        bar_colors: [!dag_tag c_lightblue, !dag_tag c_darkblue, !dag_tag c_purple, !dag_tag c_red, !dag_tag c_orange, !dag_tag c_lightbrown]
-        bins: 100
+        mode: sim
         horizon: 96
-        simulate_from_index: !dag_tag start_index
-        marginals_key: kde
-      tag: evaluation
-
-    # store the simulation results and plot args into accessible dag_tags
-    - getitem: [!dag_tag evaluation , simulation]
-      tag: simulation
-    - getitem: [!dag_tag simulation, 0]
+        simulate_from_index: 960
       tag: data
-    - getitem: [!dag_tag simulation, 1]
+
+    #simulate model again, computing the residuals
+    - simulate_model: !dag_tag marginals
+      kwargs:
+        model_type: !dag_tag model_type
+        dt: !dag_tag dt
+        rc_data: !dag_tag rc_data
+        mode: delta
+        horizon: 96
+        simulate_from_index: 960
       tag: delta
-    - getitem: [!dag_tag simulation, 2]
-      tag: maes 
-    - getitem: [!dag_tag simulation, 3]
-      tag: rmses 
-    - getitem: [!dag_tag evaluation, bar_ticks]
-      tag: bar_ticks
-    - getitem: [!dag_tag evaluation, time_coords]
-      tag: time_coords
-    - getitem: [!dag_tag evaluation, bar_colors]
-      tag: bar_colors
-    - getitem: [!dag_tag evaluation, bar_x]
-      tag: bar_x
-    - getitem: [!dag_tag evaluation, bar_ticks_x]
-      tag: bar_ticks_x
-    - getitem: [!dag_tag evaluation, groupings]
-    - str: [!dag_prev ]
-    - add: ["hyperparameters\t", !dag_prev ]
-      tag: bar_legend
+
+  helpers:
+    setup_figure:
+      ncols: 1
+      nrows: 2
+      sharex: true
+
+    set_suptitle:
+      title: Real data vs model simulation using estimated parameters
+
+    set_labels:
+      x: Time
+      only_label_outer: false
+  to_plot:
+    [0, 0]:
+      - function: plt.plot
+        args:
+          - !dag_result data
+        label: [true_data, simulated]
+      - function: [matplotlib.pyplot, ylabel]
+        args: [inside temperature (°C)]
+      - function: [matplotlib.pyplot, legend]
+    [0, 1]:
+      - function: plt.plot
+        args:
+          - !dag_result delta
+        label: residuals
+      - function: [matplotlib.pyplot, ylabel]
+        args: [derivation of the simulation (°C)]
+      - function: [matplotlib.pyplot, legend]
+
+  compute_only: []
+
 
 
 
@@ -205,3 +229,43 @@ training_data:
   col: kind
   col_wrap: 2
   sharey: False
+
+
+
+# plot a 2-dimensional partially filled heatmap of the exploration of a 2-parameter-space.
+# configure the parameters to show below
+joint:
+  based_on:
+    - .creator.multiverse
+    - .plot.facet_grid.pcolormesh
+  select_and_combine:
+    fields:
+      parameters: parameters
+      loss:
+        path: loss
+  transform:
+    # Divide the loss by the median to prevent numerical underflow
+    - .median: [!dag_tag loss, 'batch']
+    - div: [!dag_tag loss, !dag_prev ]
+    - neg_exp: [!dag_prev ]
+      tag: probabilities
+    # Flatten the prob and parameter samples into a single dimension
+    - flatten_dims_except: [!dag_tag probabilities , parameters, sample]
+      tag: prob
+    - flatten_dims_except: [!dag_tag parameters , parameters, sample]
+      tag: params
+
+    # Compute the joint
+    - joint_2D_ds: [!dag_tag params, !dag_tag prob]
+      # CHANGE PARAMETERS TO DISPLAY HERE
+      kwargs:
+        x: R
+        y: C
+      tag: data
+  # AND HERE (parameter names correspond to the chosen physical model)
+  x: R
+  y: C
+  cbar_kwargs:
+    label: ~
+  style:
+    figure.figsize: [!dag_result half_width, !dag_result half_width]

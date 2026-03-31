@@ -10,7 +10,7 @@ Data:
     weather_data: data/RC_model/weatherData/Munich_5years.mos
     T_min: 290 #[K]
     T_max: 294 #[K]
-    num_steps: 100
+    num_steps: 1152 # 12 days of data
     C: 7452000 # first entries taken from  Identifying suitable models for the heat dynamics of buildings: Peder Bacher, Henrik Madsen
     R: 0.00529
     C1: 3852000.0

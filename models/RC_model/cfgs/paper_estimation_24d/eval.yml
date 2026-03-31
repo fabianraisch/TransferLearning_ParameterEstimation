@@ -1383,7 +1383,7 @@ model_pred_csv:
     - .creator.multiverse
   creator: multiverse
   plot_func: export_simulation_to_csv
-  module: model_plots.RC_model.predicted_model
+  module: model_plots.RC_model.data_evaluation_utils
   select_and_combine:
     fields:
       parameters: parameters
