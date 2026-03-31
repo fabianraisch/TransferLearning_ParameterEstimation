@@ -152,7 +152,7 @@ utopya run RC_model path/to/run.yml
 ```
 Here, we are *only* updating those entries of the base configuration which are also given in the `run.yml` file; the remaining ones are taken from the default configuration file. The results in the output folder should look something like this:
 
-<img width="1325" height="711" alt="image" src="https://github.com/user-attachments/assets/f35d7703-7b22-42cf-9469-b97d50550724" />
+<img width="1334" height="705" alt="image" src="https://github.com/user-attachments/assets/457fc8e5-42b7-4392-bc94-8912a6718cce" />
 
 Much better, though we can still improve this result. Right now, we are only training our neural network from a single initialisation, and letting it find one of the possible parameters that fit the problem. This doesn't give us an accurate representation of the parameter space. What we really need to be doing is training it multiple times, in parallel, from different initialisations, so that it can see more of the parameter space. This is what we will do in the next section.
 
@@ -188,7 +188,7 @@ The `seed` entry controls the random initialisation of the neural network, and w
 
 Once the run is complete, the plot output should look like this:
 
-<img width="1334" height="705" alt="image" src="https://github.com/user-attachments/assets/457fc8e5-42b7-4392-bc94-8912a6718cce" />
+<img width="1325" height="711" alt="image" src="https://github.com/user-attachments/assets/f35d7703-7b22-42cf-9469-b97d50550724" />
 
 
 
