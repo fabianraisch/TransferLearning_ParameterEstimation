@@ -66,7 +66,12 @@ NeuralNet:
   type: lstm #lstm, mlp, mlp-single, optimizer
   learning_rate: 0.002
   lookback: 288
+  pretrained: data/RC_model/NN_parameter_estimation/251229-005526.pth
 ```
+
+by providing a `pretrained` neural net, a general estimator can be employed. Be careful, though, the `num_layers` and `nodes_per_layer` keys, aswell as the selected RC architecture have to match the ones used to generate the general estimator! We provide two general estimators from our work:
+- `data/RC_model/NN_parameter_estimation/251229-005526.pth`, our general estimator presented in the publication for the 2R2C model (using 140 nodes over 2 layers)
+- `data/RC_model/NN_parameter_estimation/260127-170455.pth`, our general estimator presented in the publication for the RC model (using 140 nodes over 2 layers)
 
 
 ### Sweeping hyperparameters
