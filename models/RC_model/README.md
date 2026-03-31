@@ -67,6 +67,9 @@ NeuralNet:
   learning_rate: 0.002
   lookback: 288
   pretrained: data/RC_model/NN_parameter_estimation/251229-005526.pth
+  num_layers: 2
+  nodes_per_layer:
+    default: 140
 ```
 
 by providing a `pretrained` neural net, a general estimator can be employed. Be careful, though, the `num_layers` and `nodes_per_layer` keys, aswell as the selected RC architecture have to match the ones used to generate the general estimator! We provide two general estimators from our work:
