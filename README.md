@@ -6,7 +6,7 @@
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 
 
-This project estimates parameters of electrical RC networks to some synthetic and real data using neural parameter estimation. This repository contains all the code used in the publication aswell as some frame to implement your own ODE models for which parameters can be estimated. The source of the framework - everything except \*/RC_model/ folders - was, with slight changes, written and published by Th. Gaskin and used extensively in his work. Feel free to pay the original [NeuralABM] (https://github.com/ThGaskin/NeuralABM) a visit and take a look at his work and his models.
+This project estimates parameters of electrical RC networks to some synthetic and real data using neural parameter estimation. This repository contains all the code used in the publication aswell as some frame to implement your own ODE models for which parameters can be estimated. The source of the framework - everything except \*/RC_model/ folders - was, with slight changes, written and published by Th. Gaskin and used extensively in his work. Feel free to pay the original [NeuralABM](https://github.com/ThGaskin/NeuralABM) a visit and take a look at his work and his models.
 
 As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). The following README, written by Th. Gaskin and slightly edited by us, shows some use cases of the code. A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial):
 
@@ -125,7 +125,8 @@ This directory structure already hints at the three basic steps that are execute
 
 Open the `eval` folder — in it there will be a further time-stamped folder. Every time you evaluate a simulation, a new folder is created. This way, no evaluation result is ever overwritten. In the `eval/YYMMDD-hhmmss` folder, you should find five plots. Take a look at `joint.pdf`, which should look something like this:
 
-<img src="https://github.com/ThGaskin/NeuralABM/files/13787239/densities_from_joint.pdf" width=100%>
+
+
 
 You can see the true data (orange) together with the neural net predictions (blue) and an error estimate (blue shaded area).
 The results aren't great; you will also notice from the `loss.pdf` plot that the training loss has barely decreased. Why? Well, 
