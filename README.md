@@ -525,11 +525,20 @@ This command will duplicate an existing model and rename it to whatever name you
 
 # Citation
 This code was written for the publication "Transfer Learning for Neural Parameter Estimation applied to Building
-RC Models by Fabian Raisch, Timo Germann, J. Nathan Kutz, Christoph Goebel and Benjamin Tischler.
-For citation, please use
+RC Models" by Fabian Raisch, Timo Germann, J. Nathan Kutz, Christoph Goebel and Benjamin Tischler.
+For citation, please use:
 
 @misc{2026TLparamestim,
   author       = {Fabian Raisch, Timo Germann, J. Nathan Kutz, Christoph Goebel, Benjamin Tischler},
   title        = {Transfer Learning for Neural Parameter Estimation applied to Building RC Models},
   howpublished = {under review},
+}
+
+Please don't hesitate to also cite the original author of NeuralABM, from whom we took most of the code:
+
+@misc{gaskin2025neuralabm,
+  author       = {Thomas Gaskin},
+  title        = {{NeuralABM}: Neural parameter calibration for multi-agent models},
+  howpublished = {\url{https://github.com/ThGaskin/NeuralABM}},
+  note         = {Accessed 2025-06-15},
 }
