@@ -1,5 +1,5 @@
 # Neural parameter calibration of ODEs and SDEs
-### Thomas Gaskin
+### Timo Germann, Fabian Raisch
 
 ---
 
@@ -8,7 +8,7 @@
 
 This project estimates parameters of electrical RC networks to some synthetic and real data using neural parameter estimation. This repository contains all the code used in the publication aswell as some frame to implement your own ODE models for which parameters can be estimated. The source of the framework - everything except \*/RC_model/ folders - was, with slight changes, written and published by Th. Gaskin and used extensively in his work. Feel free to pay the original [NeuralABM](https://github.com/ThGaskin/NeuralABM) a visit and take a look at his work and his models.
 
-As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). The following README, written by Th. Gaskin and slightly edited by us, shows some use cases of the code. A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial):
+As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). The following README, written by Th. Gaskin and slightly edited by us (for more personal comments, please refer to `models/RC_model/README.md`), shows some use cases of the code. A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial):
 
 
 ### Contents of this README
@@ -45,6 +45,11 @@ Move to the repository folder you just cloned, and build the conda environment:
 conda nev create -f env-[your_os].yml
 ```
 (replace \[your_os\] with either "win" or "linux")
+On linux, comment the following line in `cfg/multiverse_project_cfg` out:
+```yaml
+executable_control:
+  prefix: !if-windows-else [[python], ~]
+```
 
 when that is done, activate your environment:
 ```commandline
@@ -91,7 +96,7 @@ Done! 🎉
 > ```
 
 ## How to run a model
-Now you have set up the repository, let's run a model. We'll use the `SIR` model as an example. Running a model is a simple command:
+Now you have set up the repository, let's run a model. We'll use the `RC` model as an example. Running a model is a simple command:
 ```commandline
 utopya run RC_model
 ```
@@ -123,32 +128,33 @@ This directory structure already hints at the three basic steps that are execute
 - Store the data
 - Read in the data and automatically evaluate it by calling plot functions.
 
-Open the `eval` folder — in it there will be a further time-stamped folder. Every time you evaluate a simulation, a new folder is created. This way, no evaluation result is ever overwritten. In the `eval/YYMMDD-hhmmss` folder, you should find five plots. Take a look at `joint.pdf`, which should look something like this:
+Open the `eval` folder — in it there will be a further time-stamped folder. Every time you evaluate a simulation, a new folder is created. This way, no evaluation result is ever overwritten. In the `eval/YYMMDD-hhmmss` folder, you should find five plots. Take a look at `model_pred.pdf`, which should look something like this:
+
+<img width="1321" height="708" alt="image" src="https://github.com/user-attachments/assets/266da1f6-ea42-4d50-9fbe-efe37bae9437" />
 
 
 
-
-You can see the true data (orange) together with the neural net predictions (blue) and an error estimate (blue shaded area).
+You can see the true data in blue together with the neural net predictions in black.
 The results aren't great; you will also notice from the `loss.pdf` plot that the training loss has barely decreased. Why? Well, 
 take a look at the `RC_model_cfg.yml` file. This file holds all the default parameters for the model run. Scroll down to the `Training` entry: you will notice the `lookback` is set to 1. This means that the neural network performs a gradient descent step every time it has reproduced a single frame of the time series. Further above, you will notice that the synthetic dataset used to train the model has a length of `num_steps: 1152` (with a dt of 900s = 15min that accounts for 12 days). For these thermal dynamics, let's see if letting the neural network see one day of data for each gradient descent step would improve things. You could change the lookback in the `RC_model_cfg.yml` file directly, but actually this is not recommended: this file holds all the default values the model will fall back on, should something go wrong. Instead create a new `run.yml` file, somewhere on your computer, and copy the following entries into it:
 
 ```yaml
 parameter_space:
-  num_epochs: 50
+  num_epochs: 30
   RC_model:
-    Training:
+    NeuralNet:
       lookback: 96
 ```
-We are now using a lookback of 96, i.e. the length of the time series, and are also training the model for a little bit longer (50 epochs instead of the default 10). Now, run the model again and pass the path to this file to the model:
+We are now using a lookback of 96, i.e. the length of the time series, and are also training the model for a little bit longer (30 epochs instead of the default 10). Now, run the model again and pass the path to this file to the model:
 
 ```commandline
 utopya run RC_model path/to/run.yml
 ```
 Here, we are *only* updating those entries of the base configuration which are also given in the `run.yml` file; the remaining ones are taken from the default configuration file. The results in the output folder should look something like this:
 
-<img src="https://github.com/ThGaskin/NeuralABM/files/13787372/densities_from_joint.pdf" width=100%>
+<img width="1325" height="711" alt="image" src="https://github.com/user-attachments/assets/f35d7703-7b22-42cf-9469-b97d50550724" />
 
-Perhaps a little bit better, but still not great, and the uncertainty is much too small. The real problem here is that we are only training our neural network from a single initialisation, and letting it find one of the possible parameters that fit the problem. This doesn't give us an accurate representation of the parameter space. What we really need to be doing is training it multiple times, in parallel, from different initialisations, so that it can see the more of the parameter space. This is what we will do in the next section.
+Much better, though we can still improve this result. Right now, we are only training our neural network from a single initialisation, and letting it find one of the possible parameters that fit the problem. This doesn't give us an accurate representation of the parameter space. What we really need to be doing is training it multiple times, in parallel, from different initialisations, so that it can see more of the parameter space. This is what we will do in the next section.
 
 > [!TIP]
 > #### Changing the output directory
@@ -182,29 +188,33 @@ The `seed` entry controls the random initialisation of the neural network, and w
 
 Once the run is complete, the plot output should look like this:
 
-<img src="https://github.com/ThGaskin/NeuralABM/files/13787421/densities_from_joint.pdf" width=100%>
+<img width="1334" height="705" alt="image" src="https://github.com/user-attachments/assets/457fc8e5-42b7-4392-bc94-8912a6718cce" />
 
-Much better! You can see that the predicted densities are significantly closer to the true data. The folder also contains the marginal densities on the parameters we are estimating:
 
-<img src="https://github.com/ThGaskin/NeuralABM/files/13787439/marginals.pdf" width=100%>
 
-These too look good: we obtain an infection parameter of about 0.21, and infection period of about 15 days – these are very similar to the values of 0.2 and 14 used to generate the synthetic data.
+A lot better! You can see that the predicted temperatures are closer to the true data. The folder also contains the marginal densities on the parameters we are estimating:
+
+<img width="1434" height="419" alt="image" src="https://github.com/user-attachments/assets/ea60113f-2eb5-4fd0-ba89-be882c1efd13" />
+
+
+These too look good: we obtain a capacity of about 7.420MF, a resistance of about 5.28mOhm and an effective window size of about 7.87qm – these are very similar to the values of 7.452MF, 5.29mOhm and 7.89qm used to generate the synthetic data.
 
 > [!TIP]
 > You can also configure sweeps by adding a `--run-mode sweep` or `--run-mode single` flag to the command in the CLI:
 > ```commandline
-> utopya run SIR --run-mode sweep`
+> utopya run RC_model --run-mode sweep`
 > ```
 > This will overwrite the settings in the configuration file. In general, paths to `run.yml` files will overwrite the default entries, and CLI flags will overwrite the
 > entries in the config file. You can also change parameters right from the CLI:
 > ```commandline
-> utopya run SIR --pp num_epochs=300
+> utopya run RC_model --pp num_epochs=30
 > ```
 > See [here](https://docs.utopia-project.org/html/usage/run/config.html) for details. 
 
 In your output folder you will also find the following plot:
 
-<img src="https://github.com/ThGaskin/NeuralABM/files/13852798/predictions.pdf" width=100%>
+<img width="1310" height="426" alt="image" src="https://github.com/user-attachments/assets/e5c51048-f81d-40eb-92f0-26be9241d59f" />
+
 
 Each line represents a trajectory taken by the neural net during training; as you can see, we are training the net multiple times in parallel, each time initialising the neural network at a different value of the initial distribution – see [the corresponding section](#specifying-the-prior-on-the-output) on how to adjust this distribution. The colour of each line repressents the training loss at that sample.
 The number of initialisations is controlled by the `seed` entry of the run config.
@@ -213,7 +223,7 @@ The number of initialisations is controlled by the `seed` entry of the run confi
 > As an exercise, play around with the `seed.range` argument of the `run.yml` config. How does the quality of the time series prediction and marginal densities change as you increase or decrease the number of runs?
 
 ### Sweep configurations and multiple sweeps
-You can sweep over as many parameters and entries as you like; any key in the run configuration can be swept over. An sweep entry must take the following form:
+You can sweep over as many parameters and entries as you like; any key in the run configuration can be swept over. Any sweep entry must take the following form:
 ```yaml
 parameter: !sweep
    default: 0
