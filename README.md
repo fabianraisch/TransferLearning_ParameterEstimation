@@ -6,9 +6,9 @@
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 
 
-This project estimates parameters of electrical RC networks to some synthetic and real data using neural parameter estimation. This repository contains all the code used in the publication aswell as some frame to implement your own ODE models for which parameters can be estimated. The source of the framework - everything except \*/RC_model/ folders - was, with slight changes, **written and published by Th. Gaskin and used extensively in his work. Feel free to pay the original [NeuralABM](https://github.com/ThGaskin/NeuralABM) a visit and take a look at his work and his models.**
+This project estimates the parameters of building RC models using neural parameter estimation on synthetic and real data. This repository contains the code used in the [publication](https://arxiv.org/abs/2604.05904) of **Transfer Learning for Neural Parameter Estimation applied to Building RC Models**. The content of the framework is based on [NeuralABM](https://github.com/ThGaskin/NeuralABM).
 
-As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). The following README, written by Th. Gaskin and slightly edited by us (for more personal comments, please refer to `models/RC_model/README.md`), shows some use cases of the code. A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial):
+As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial):
 
 
 ### Contents of this README
