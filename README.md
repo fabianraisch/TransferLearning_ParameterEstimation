@@ -1,4 +1,4 @@
-# Neural parameter calibration of ODEs and SDEs
+# Neural Parameter Estimation of RC Thermal Building Models for Model Predictive Control
 ### Fabian Raisch, Timo Germann
 
 ---
