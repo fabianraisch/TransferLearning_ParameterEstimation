@@ -6,9 +6,23 @@
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 
 
-This project estimates the parameters of building RC models using neural parameter estimation on synthetic and real data. The repository contains the code used in the [publication](https://arxiv.org/abs/2604.05904) of **Transfer Learning for Neural Parameter Estimation applied to Building RC Models**. For citation, you can use the notation displayed at the end of this ReadMe. The content of the framework is based on [NeuralABM](https://github.com/ThGaskin/NeuralABM).
+This project estimates the parameters of building RC models using neural parameter estimation on synthetic and real data. The repository contains the code used in the [publication](https://arxiv.org/abs/2604.05904) of **Neural Parameter Estimation of RC Thermal Building Models for Model Predictive Control** by Fabian Raisch, Timo Germann, Sang-Woo Ham, J. Nathan Kutz, Christoph Goebel and Benjamin Tischler.
+For citation, please use:
 
-As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial):
+@misc{raisch2026transferlearningneuralparameter,
+      title={Neural Parameter Estimation of RC Thermal Building Models for Model Predictive Control},  
+      author={Fabian Raisch and Timo Germann and Sang-Woo Ham and J. Nathan Kutz and Christoph Goebel and Benjamin Tischler},  
+      year={2026},  
+      eprint={2604.05904},  
+      archivePrefix={arXiv},  
+      primaryClass={eess.SY},  
+      url={https://arxiv.org/abs/2604.05904},  
+}  
+
+
+As a simulation framework, this code uses the [utopya package](https://docs.utopia-project.org/html/index.html). A complete guide on utopya can be found [here](https://docs.utopia-project.org/html/getting_started/tutorial.html#tutorial).
+
+The content of the framework is based on [NeuralABM](https://github.com/ThGaskin/NeuralABM).
 
 
 ### Contents of this README
@@ -523,19 +537,3 @@ utopya models copy <model_name>
 ```
 This command will duplicate an existing model and rename it to whatever name you give when prompted. You can then successively change an existing model to your own requirements.
 
-# Citation
-This code was written for the publication "Transfer Learning for Neural Parameter Estimation applied to Building
-RC Models" by Fabian Raisch, Timo Germann, J. Nathan Kutz, Christoph Goebel and Benjamin Tischler.
-For citation, please use:
-
-@misc{raisch2026transferlearningneuralparameter,
-      title={Transfer Learning for Neural Parameter Estimation applied to Building RC Models}, 
-      author={Fabian Raisch and Timo Germann and J. Nathan Kutz and Christoph Goebel and Benjamin Tischler},
-      year={2026},
-      eprint={2604.05904},
-      archivePrefix={arXiv},
-      primaryClass={eess.SY},
-      url={https://arxiv.org/abs/2604.05904}, 
-}
-
-Note: This work has been submitted to the IEEE for possible publication.
